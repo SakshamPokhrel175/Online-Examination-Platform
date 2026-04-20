@@ -1,0 +1,44 @@
+# Spring Boot (Java / Maven)
+/target/
+/logs/
+*.log
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+.cache/
+coverage/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+
+# Misc
+*.tmp
+*.swp
+*.bak
