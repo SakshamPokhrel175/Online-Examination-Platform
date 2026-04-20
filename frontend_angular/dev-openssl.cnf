@@ -1,0 +1,21 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+prompt             = no
+
+[ req_distinguished_name ]
+C = IN
+ST = State
+L = City
+O = Dev
+OU = Dev
+CN = 10.180.27.207:4200
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost
+IP.1  = 10.180.27.207:4200
+

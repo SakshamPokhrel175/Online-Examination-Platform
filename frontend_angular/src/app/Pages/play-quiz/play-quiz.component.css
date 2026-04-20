@@ -1,0 +1,105 @@
+/* Global CSS for proctoring mode */
+.secure-page-container { user-select: none; pointer-events: auto; min-height: 100vh; padding-bottom: 24px; background: #f8fafc; }
+.navbar.fixed-top { position: fixed; top: 0; left: 0; right: 0; z-index: 1050; }
+.container.py-5 { padding-top: 80px !important; }
+
+/* option button styling */
+.option-btn { transition: transform .12s ease, box-shadow .12s ease; border-radius: 10px; text-align: left; padding: 1rem; }
+.option-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(2,6,23,0.06); }
+.option-btn.selected { background: #0d6efd; color: white; border-color: transparent; box-shadow: 0 10px 30px rgba(13,110,253,0.12); }
+
+/* Mini camera preview */
+.mini-proctor-wrap {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2000;
+  width: 220px;
+  height: 170px;
+  display: grid;
+  place-items: center;
+}
+.mini-proctor-video {
+  width: 200px;
+  height: 150px;
+  background: #000;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  border: 3px solid rgba(255,255,255,0.6);
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* violation overlay (centered, responsive) */
+.violation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.violation-card {
+  background: #fff;
+  max-width: 480px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+.violation-card .display-4 { font-size: 2.2rem; }
+
+/* highlight border when violating */
+.mini-proctor-video.violation-border { border-color: rgba(220, 53, 69, 0.95) !important; box-shadow: 0 6px 24px rgba(220,53,69,0.25); }
+
+/* small devices */
+@media (max-width: 576px) {
+  .mini-proctor-wrap { left: 8px; bottom: 8px; width: 160px; height: 120px; }
+  .mini-proctor-video { width: 150px; height: 110px; }
+  .card-body { padding: 1.25rem !important; }
+  .violation-card { padding: 18px; }
+  .container.py-5 { padding-top: 90px !important; }
+}
+
+/* medium devices */
+@media (max-width: 768px) {
+  .hero-art { display: none; }
+  .container.py-5 { padding-top: 90px !important; }
+}
+
+
+
+.proctor-warning{
+position: fixed;
+top: 70px;
+left: 50%;
+transform: translateX(-50%);
+background: #ff3b3b;
+color: white;
+padding: 12px 30px;
+border-radius: 8px;
+font-weight: 600;
+z-index: 99999;
+box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+animation: warningFade 0.3s ease;
+}
+
+@keyframes warningFade{
+from{
+opacity:0;
+transform:translate(-50%,-10px);
+}
+to{
+opacity:1;
+transform:translate(-50%,0);
+}
+}
+
+.violation-overlay {
+  animation: blinkBg 0.6s infinite alternate;
+}
+
+@keyframes blinkBg {
+  from { background: rgba(255,0,0,0.15); }
+  to   { background: rgba(255,0,0,0.35); }
+}

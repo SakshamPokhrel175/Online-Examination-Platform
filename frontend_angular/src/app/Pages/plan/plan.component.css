@@ -1,0 +1,89 @@
+/* Simple, professional plan page */
+
+/* Palette */
+:root{
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --primary: #0b5ea8; /* calm blue */
+  --primary-600: #0d6efd;
+  --soft-shadow: 0 10px 30px rgba(15,23,42,0.06);
+}
+
+/* Page */
+.plan-page {
+  background: linear-gradient(180deg, #f5f7fa 0%, var(--bg) 100%);
+  color: #0b1220;
+  padding-bottom: 4.5rem;
+}
+
+/* Heading */
+.heading { color: var(--primary); font-size: 1.5rem; }
+.subtext { color: var(--muted); }
+
+/* Card */
+.plan-card {
+  background: var(--card);
+  border: 1px solid rgba(15,23,42,0.04);
+  border-radius: 12px;
+  box-shadow: var(--soft-shadow);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.plan-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(15,23,42,0.08);
+}
+
+/* Titles & price */
+.title { color: #0b1220; font-size: 1rem; }
+.price { color: var(--primary-600); }
+
+/* Features */
+.features-list .feature-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--primary-600);
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* Buttons */
+.btn-primary {
+  background: #0d6efd !important;
+  border: 1px solid #0b5ed7 !important;
+  color: #ffffff !important;
+  border-radius: 50rem; /* keeps pill shape */
+  box-shadow: 0 6px 14px rgba(13,110,253,0.2);
+}
+.btn-primary:hover {
+  background: #0b5ed7 !important;
+  border-color: #0a58ca !important;
+}
+
+
+.learn-more-btn {
+  background: transparent;
+  border: 1px solid rgba(11,94,168,0.08);
+  color: #0b1220;
+}
+
+/* Responsive tweaks */
+@media (max-width: 1199.98px) {
+  .plan-card { min-height: 340px; }
+}
+@media (max-width: 767.98px) {
+  .plan-card { min-height: auto; }
+  .plan-page { padding-top: 2.5rem; }
+}
+
+/* SweetAlert popup simple styling */
+.swal-simple {
+  background: var(--card) !important;
+  color: #0b1220 !important;
+}
+.swal-simple .swal2-title { color: #0b1220 !important; }
+.swal2-popup .swal2-confirm {
+  background: linear-gradient(90deg, var(--primary), var(--primary-600)) !important;
+  border: none;
+}

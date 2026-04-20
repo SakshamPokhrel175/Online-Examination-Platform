@@ -1,0 +1,129 @@
+<div class="d-flex" id="wrapper">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="bg-dark border-end text-white d-none d-md-block" id="sidebar" style="min-width: 250px; min-height: 100vh;">
+    <div class="sidebar-heading text-center py-4 fs-5 fw-bold border-bottom border-secondary mb-3">
+      QuizVerse Admin
+    </div>
+
+    <div class="list-group list-group-flush px-2">
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white active">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a>
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+        <i class="bi bi-people me-2"></i> Users (Soon)
+      </a>
+      <a href="#" class="list-group-item list-group-item-action bg-dark text-white">
+        <i class="bi bi-gear me-2"></i> Settings
+      </a>
+
+      <div class="mt-4"></div>
+
+      <button class="list-group-item list-group-item-action bg-danger text-white mt-3 rounded" (click)="logout()">
+        <i class="bi bi-box-arrow-right me-2"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- Offcanvas sidebar for small devices -->
+  <div class="offcanvas offcanvas-start d-md-none bg-dark text-white" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+    <div class="offcanvas-header border-bottom border-secondary">
+      <h5 class="offcanvas-title" id="mobileSidebarLabel">QuizVerse Admin</h5>
+      <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <div class="list-group list-group-flush">
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white active" data-bs-dismiss="offcanvas">
+          <i class="bi bi-speedometer2 me-2"></i> Dashboard
+        </a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white" data-bs-dismiss="offcanvas">
+          <i class="bi bi-people me-2"></i> Users (Soon)
+        </a>
+        <a href="#" class="list-group-item list-group-item-action bg-dark text-white" data-bs-dismiss="offcanvas">
+          <i class="bi bi-gear me-2"></i> Settings
+        </a>
+        <button class="list-group-item list-group-item-action bg-danger text-white mt-3 rounded" (click)="logout()">
+          <i class="bi bi-box-arrow-right me-2"></i> Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page content -->
+  <div id="page-content-wrapper" class="w-100 bg-light">
+
+    <!-- Top navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm px-3 px-md-4 py-2">
+      <div class="d-flex align-items-center w-100">
+        <!-- Mobile toggle -->
+        <button class="btn d-md-none me-3 p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-label="Toggle navigation">
+          <i class="bi bi-list fs-3 text-dark"></i>
+        </button>
+
+        <div class="d-flex align-items-center">
+          <h4 class="m-0 text-primary small text-truncate">Overview</h4>
+        </div>
+
+        <div class="ms-auto d-flex align-items-center">
+          <span class="me-3 text-muted small d-none d-sm-inline">Welcome, Admin</span>
+          <img src="https://ui-avatars.com/api/?name=Admin&background=0D6EFD&color=fff" class="rounded-circle" width="40" height="40" alt="Admin avatar">
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid p-3 p-md-4">
+
+      <!-- Metrics -->
+      <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+          <div class="card shadow-sm border-0 border-start border-primary border-4 h-100">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted small">Total Institutions</h6>
+              <h2 class="text-dark mb-0">{{ totalInstitutions }}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="card shadow-sm border-0 border-start border-success border-4 h-100">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted small">Active Students</h6>
+              <h2 class="text-dark mb-0">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+  <div class="card shadow-sm border-0 border-start border-info border-4 h-100">
+    <div class="card-body">
+      <h6 class="text-uppercase text-muted small">General Users</h6>
+      <h2 class="text-dark mb-0">{{ generalUsersCount }}</h2>
+    </div>
+  </div>
+</div>
+
+
+        <div class="col-12 col-md-4">
+          <div class="card shadow-sm border-0 border-start border-warning border-4 h-100">
+            <div class="card-body">
+              <h6 class="text-uppercase text-muted small">System Status</h6>
+              <h2 class="text-success mb-0 fs-5">Online</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content area -->
+      <div class="row g-4">
+        <div class="col-12 col-lg-8">
+          <!-- Child component (keeps same usage) -->
+          <app-institutions (listUpdated)="updateCount($event)"></app-institutions>
+        </div>
+
+        <div class="col-12 col-lg-4">
+          <app-institutions-stats></app-institutions-stats>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

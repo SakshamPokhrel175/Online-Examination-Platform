@@ -1,0 +1,58 @@
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-5 col-xl-4">
+
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-sm-5">
+
+          <h2 class="text-center mb-4 fw-bold">
+            Join Live Quiz
+          </h2>
+
+          <!-- Game PIN -->
+          <div class="mb-3">
+            <input
+              type="text"
+              class="form-control form-control-lg text-center"
+              placeholder="Game PIN"
+              maxlength="6"
+              [(ngModel)]="gamePin"
+            />
+          </div>
+
+          <!-- Nickname -->
+          <div class="mb-4">
+            <input
+              type="text"
+              class="form-control form-control-lg text-center"
+              placeholder="Nickname"
+              [(ngModel)]="nickname"
+            />
+          </div>
+
+          <!-- Error -->
+          <div
+            *ngIf="errorMessage"
+            class="alert alert-danger text-center py-2"
+          >
+            {{ errorMessage }}
+          </div>
+
+          <!-- Button -->
+          <div class="d-grid">
+            <button
+              class="btn btn-primary btn-lg"
+              (click)="joinGame()"
+              [disabled]="loading"
+            >
+              <span *ngIf="!loading">OK, Go!</span>
+              <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

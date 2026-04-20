@@ -1,0 +1,129 @@
+/* core layout */
+#wrapper { overflow-x: hidden; }
+
+
+/* ensure top-most modal is always above */
+.modal {
+  z-index: 1055;
+}
+
+.modal-backdrop {
+  z-index: 1050;
+}
+
+
+/* sidebar heading */
+.sidebar-heading { padding-top: 1.2rem; padding-bottom: 1rem; }
+
+/* list-group items */
+.list-group-item {
+    cursor: pointer;
+    transition: all 0.18s ease;
+    color: #555;
+    background-color: transparent;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    padding: 10px 12px;
+}
+
+.list-group-item:hover:not(.active-tab) {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+    transform: translateX(4px);
+}
+
+/* active state */
+.active-tab {
+    background-color: #0d6efd !important;
+    color: white !important;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+}
+
+/* cards */
+.card {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover { transform: translateY(-3px); }
+
+/* hover-card deeper elevation */
+.hover-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08) !important;
+}
+
+/* text truncation helpers */
+.text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* small-screen adjustments */
+@media (max-width: 575.98px) {
+  .card .card-body { padding: 0.9rem; }
+  .sidebar-heading { font-size: 1rem; padding: 10px; }
+  .navbar .ms-auto { margin-left: auto; }
+  .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+}
+
+/* tablet */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  #sidebar { position: sticky; top: 56px; }
+}
+
+/* accessibility focus outlines */
+button:focus, .list-group-item:focus, .form-control:focus {
+  outline: 3px solid rgba(13,110,253,0.12);
+  outline-offset: 2px;
+}
+
+/* table responsiveness safety */
+.table-responsive { overflow-x: auto; max-width: 100%; }
+
+/* ensure images don't overflow */
+img { max-width: 100%; height: auto; }
+
+/* subtle badge sizing */
+.badge { font-size: 0.85rem; padding: 0.5em 0.6em; }
+
+
+
+
+
+
+/* analytics modal layout */
+.analytics-modal {
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* fixed sections */
+.modal-header,
+.date-filter-bar,
+.analytics-filters,
+.modal-footer {
+  flex-shrink: 0;
+}
+
+/* scrollable table */
+.analytics-table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  width: 100%;
+}
+
+/* sticky header */
+.analytics-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 5;
+}
+
+/* performance cell */
+.performance-cell {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  min-width: 220px;
+}

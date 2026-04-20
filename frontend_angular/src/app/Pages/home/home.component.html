@@ -1,0 +1,100 @@
+<div class="home-wrapper">
+  <!-- Hero Section -->
+  <header class="hero text-center py-5">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Secure Quiz Platform</h1>
+      <p class="lead text-muted mb-3">Advanced Web API Authentication with Face Recognition &amp; AI Anomaly Detection</p>
+
+      <!-- changed to button that opens role modal -->
+      <button (click)="openRoleModal()"
+              class="btn btn-primary btn-lg mt-3 px-5 py-2 fw-bold">
+        Get Started
+      </button>
+    </div>
+  </header>
+
+  <!-- Features Section -->
+  <section class="container my-5">
+    <h2 class="text-center mb-4 fw-bold text-uppercase">Key Features</h2>
+    <div class="row text-center g-4">
+      <div class="col-md-4">
+        <div class="card p-4 feature-card h-100">
+          <i class="bi bi-shield-lock fs-1 text-accent"></i>
+          <h4 class="mt-3">Secure JWT Authentication</h4>
+          <p class="text-muted">Ensuring secure login and session management.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card p-4 feature-card h-100">
+          <i class="bi bi-person-bounding-box fs-1 text-accent-2"></i>
+          <h4 class="mt-3">Face Recognition &amp; Eye Tracking</h4>
+          <p class="text-muted">Verify users and prevent cheating during exams.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card p-4 feature-card h-100">
+          <i class="bi bi-eye-slash fs-1 text-danger"></i>
+          <h4 class="mt-3">AI Anomaly Detection</h4>
+          <p class="text-muted">Detect multiple faces or suspicious eye movements.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- User Roles Section -->
+  <section class="py-5">
+    <div class="container text-center">
+      <h2 class="fw-bold text-uppercase mb-4">User Roles</h2>
+      <div class="row mt-4 g-4">
+
+        <div class="col-md-3">
+          <div class="card p-3 role-card h-100">
+            <h4 class="text-warning fw-bold">Pool User</h4>
+            <p class="text-muted">Creates quizzes and plays for free with public access thorugh pool without login.</p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 role-card h-100">
+            <h4 class="text-warning fw-bold">General User</h4>
+            <p class="text-muted">Creates quizzes and plays for free with public access.</p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 role-card h-100">
+            <h4 class="text-primary fw-bold">Admin</h4>
+            <p class="text-muted">Manages platform security, users, and analytics.</p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 role-card h-100">
+            <h4 class="text-success fw-bold">Teacher</h4>
+            <p class="text-muted">Creates quizzes, monitors exams, and evaluates performance.</p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card p-3 role-card h-100">
+            <h4 class="text-danger fw-bold">Student</h4>
+            <p class="text-muted">Attempts quizzes securely with AI-based monitoring.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <app-feature></app-feature>
+  <app-remote-proctoring></app-remote-proctoring>
+  <app-plan></app-plan>
+  <app-help></app-help>
+
+  <!-- Call to Action -->
+  <div class="text-center my-5">
+    <a (click)="openRoleModal()" class="btn btn-secondary btn-lg px-5 py-2 fw-bold">Sign Up Now</a>
+  </div>
+</div>

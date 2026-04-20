@@ -1,0 +1,124 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-3 text-primary" routerLink="/" style="cursor: pointer;">
+      QuizVerse
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home" routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeNavbar()" style="cursor: pointer;">
+            Home
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/features" routerLinkActive="active-link"
+            (click)="closeNavbar()" style="cursor: pointer;">
+            Features
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/remote-proctoring" routerLinkActive="active-link"
+            (click)="closeNavbar()" style="cursor: pointer;">
+            Remote Proctoring
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/plans" routerLinkActive="active-link"
+            (click)="closeNavbar()" style="cursor: pointer;">
+            Plans
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/help" routerLinkActive="active-link"
+            (click)="closeNavbar()" style="cursor: pointer;">
+            Help
+          </a>
+        </li>
+
+        <!-- not-logged in dropdown -->
+        <li class="nav-item dropdown" *ngIf="!isLoggedIn">
+          <!-- prevent default navigation to '#' to avoid jump-to-top -->
+          <a class="nav-link dropdown-toggle btn btn-outline-primary ms-2 px-3"
+             href="#" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false"
+             style="cursor: pointer;"
+             (click)="$event.preventDefault()">
+            Log in / Sign Up
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            <li>
+              <h6 class="dropdown-header">Pool Users</h6>
+            </li>
+            <li>
+              <!-- close navbar after navigation -->
+              <a class="dropdown-item" routerLink="pool/auth" (click)="closeNavbar()" style="cursor: pointer;">Pool</a>
+            </li>
+            <li>
+              <h6 class="dropdown-header">General Users</h6>
+            </li>
+            <li>
+              <!-- close navbar after navigation -->
+              <a class="dropdown-item" routerLink="auth/general" (click)="closeNavbar()" style="cursor: pointer;">General</a>
+            </li>
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+              <h6 class="dropdown-header">Institution Users</h6>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="auth/student" (click)="closeNavbar()" style="cursor: pointer;">Student</a>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="auth/faculty" (click)="closeNavbar()" style="cursor: pointer;">Faculty</a>
+            </li>
+            <li>
+              <h6 class="dropdown-header">Administration Users</h6>
+            </li>
+            <li>
+              <a class="dropdown-item" routerLink="auth/admin" (click)="closeNavbar()" style="cursor: pointer;">Admin</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- logged-in dropdown -->
+        <li class="nav-item dropdown" *ngIf="isLoggedIn">
+          <a class="nav-link dropdown-toggle btn btn-primary ms-2 px-3"
+             href="#" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false"
+             style="cursor: pointer;"
+             (click)="$event.preventDefault()">
+            My Account
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" [routerLink]="dashboardPath" (click)="closeNavbar()" style="cursor: pointer;">Dashboard</a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <button class="dropdown-item text-danger" (click)="onLogout()" style="cursor: pointer;">
+                Logout
+              </button>
+            </li>
+          </ul>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>

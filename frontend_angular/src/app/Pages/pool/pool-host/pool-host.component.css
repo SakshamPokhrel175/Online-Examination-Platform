@@ -1,0 +1,163 @@
+/* 🏆 PODIUM STYLING */
+
+.podium-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.podium {
+  width: 120px;
+  text-align: center;
+  border-radius: 10px;
+  color: white;
+  animation: riseUp 0.6s ease forwards;
+}
+
+.podium .medal {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.podium .name {
+  font-weight: bold;
+}
+
+.podium .score {
+  font-size: 14px;
+}
+
+/* Heights */
+.podium.first {
+  height: 160px;
+  background: linear-gradient(to top, #d4af37, #f7e27f);
+}
+
+.podium.second {
+  height: 130px;
+  background: linear-gradient(to top, #c0c0c0, #e5e5e5);
+}
+
+.podium.third {
+  height: 110px;
+  background: linear-gradient(to top, #cd7f32, #e6a15c);
+}
+
+/* Animation */
+@keyframes riseUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ================= FINISH SCREEN ================= */
+
+.finish-screen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #4e73df, #1cc88a, #f6c23e);
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  color: white;
+  text-align: center;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.finish-content {
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.finish-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.winner-box {
+  margin-bottom: 40px;
+}
+
+.winner-label {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.winner-name {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+
+.winner-score {
+  font-size: 1.5rem;
+}
+
+.finish-podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.finish-podium-item {
+  padding: 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  animation: riseUp 0.8s ease forwards;
+}
+
+.finish-podium-item.first {
+  background: gold;
+  color: black;
+  height: 160px;
+}
+
+.finish-podium-item.second {
+  background: silver;
+  color: black;
+  height: 130px;
+}
+
+.finish-podium-item.third {
+  background: #cd7f32;
+  height: 110px;
+}
+
+@keyframes riseUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+

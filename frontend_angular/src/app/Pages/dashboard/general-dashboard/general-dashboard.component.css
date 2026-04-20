@@ -1,0 +1,95 @@
+/* ===== GLOBAL RESPONSIVE SAFETY NET ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* img, video {
+  max-width: 100%;
+  height: auto;
+} */
+
+button {
+  touch-action: manipulation;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+
+
+
+/* Modal layout */
+.analytics-modal {
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fixed sections */
+.modal-header,
+.date-filter-bar,
+.analytics-filters,
+.modal-footer {
+  flex-shrink: 0;
+}
+
+/* Filters horizontal scroll on small screens */
+.filters-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+/* Table scroll area */
+.analytics-table-wrapper {
+  flex: 1;
+  overflow-y: auto;     /* vertical scroll */
+  overflow-x: auto;     /* ✅ allow horizontal scroll */
+  width: 100%;
+}
+
+
+/* Sticky table header */
+.analytics-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 5;
+}
+
+/* Performance layout */
+.performance-cell {
+  display: flex;
+  justify-content: space-between;
+  min-width: 180px;
+}
+
+.analytics-table {
+  min-width: 900px;   /* forces horizontal scroll on small screens */
+}
+
+
+/* Header formatting */
+.analytics-table th {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Data cells can wrap */
+.analytics-table td {
+  white-space: normal;
+  vertical-align: middle;
+}
+
+
+
+.analytics-table td:first-child,
+.analytics-table td:nth-child(2) {
+  white-space: normal;
+}

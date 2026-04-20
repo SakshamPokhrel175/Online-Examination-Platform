@@ -1,0 +1,124 @@
+<!-- ================= POOL AUTH PAGE ================= -->
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light">
+
+  <!-- HEADER -->
+  <div class="w-100 bg-primary text-white py-3 text-center rounded-top shadow">
+    <h2 class="m-0 fw-bold">Pool Platform — Host Access</h2>
+  </div>
+
+  <!-- AUTH CARD -->
+  <div class="w-100" style="max-width: 540px;">
+    <div class="card p-4 shadow rounded-4 mt-3">
+
+      <!-- TOGGLE -->
+      <div class="d-flex justify-content-center mb-3">
+        <button
+          class="btn btn-outline-primary me-2"
+          [class.active]="isLoginSelected"
+          (click)="toggleForm(true)">
+          Login
+        </button>
+
+        <button
+          class="btn btn-outline-primary"
+          [class.active]="!isLoginSelected"
+          (click)="toggleForm(false)">
+          Sign Up
+        </button>
+      </div>
+
+      <!-- ================= LOGIN ================= -->
+      <div *ngIf="isLoginSelected">
+        <h4 class="text-center fw-bold mb-3">Pool Host Login</h4>
+
+        <div *ngIf="error" class="alert alert-danger py-2">
+          {{ error }}
+        </div>
+
+        <form (ngSubmit)="onLogin()" novalidate>
+          <div class="mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              required
+              [(ngModel)]="loginData.email"
+              name="email">
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              required
+              [(ngModel)]="loginData.password"
+              name="password">
+          </div>
+
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            [disabled]="loading">
+            {{ loading ? 'Signing in…' : 'Login' }}
+          </button>
+        </form>
+
+        <div class="mt-3 text-center">
+          <a href="#" (click)="onForgotPassword($event)">
+            Forgot password?
+          </a>
+        </div>
+      </div>
+
+      <!-- ================= SIGNUP ================= -->
+      <div *ngIf="!isLoginSelected">
+        <h4 class="text-center fw-bold mb-3">Create Pool Host Account</h4>
+
+        <div *ngIf="error" class="alert alert-danger py-2">
+          {{ error }}
+        </div>
+
+        <form (ngSubmit)="onSignup()" novalidate>
+          <div class="mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              required
+              [(ngModel)]="signupData.email"
+              name="email">
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              required
+              [(ngModel)]="signupData.password"
+              name="password">
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Confirm Password"
+              required
+              [(ngModel)]="signupData.confirmPassword"
+              name="confirmPassword">
+          </div>
+
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            [disabled]="loading">
+            {{ loading ? 'Creating…' : 'Sign Up' }}
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

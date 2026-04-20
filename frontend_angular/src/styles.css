@@ -1,0 +1,82 @@
+/* ===== SweetAlert role modal (global styles) ===== */
+.swal2-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Popup base */
+.swal2-popup.swal-role-popup {
+  border-radius: 14px;
+  padding: 22px;
+  background: #ffffff; /* or rgba(255,255,255,0.95) for glass */
+  box-shadow: 0 10px 30px rgba(15,23,42,0.06);
+}
+
+/* Title */
+.swal2-title .role-title,
+.swal2-popup .role-title {
+  color: #0b4a6f; /* var(--accent) */
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+/* Role buttons — use strong specificity and !important because SweetAlert has defaults */
+.swal2-popup .swal-btn-general,
+.swal2-popup .swal-btn-student,
+.swal2-popup .swal-btn-faculty {
+  display: inline-block;
+  padding: 10px 14px !important;
+  font-weight: 600;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 30px rgba(15,23,42,0.06) !important;
+  border: none !important;
+  text-align: center;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Individual colors */
+.swal2-popup .swal-btn-general {
+  background: #0b5ea8 !important;      /* primary */
+  color: #fff !important;
+}
+.swal2-popup .swal-btn-student {
+  background: #198754 !important;      /* success */
+  color: #fff !important;
+}
+.swal2-popup .swal-btn-faculty {
+  background: #0dcaf0 !important;      /* info */
+  color: #fff !important;
+}
+
+/* Hover */
+.swal2-popup .swal-btn-general:hover,
+.swal2-popup .swal-btn-student:hover,
+.swal2-popup .swal-btn-faculty:hover {
+  opacity: 0.92 !important;
+}
+
+/* Make sure Cancel button looks decent */
+.swal2-popup .swal2-cancel {
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  background: #6b7280 !important; /* muted gray */
+  border: none !important;
+}
+
+/* Mobile: stack buttons full-width */
+@media (max-width: 575.98px) {
+  .swal2-popup .swal-btn-general,
+  .swal2-popup .swal-btn-student,
+  .swal2-popup .swal-btn-faculty {
+    display: block;
+    width: 100% !important;
+  }
+  .swal2-popup .swal2-cancel {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+  }
+}

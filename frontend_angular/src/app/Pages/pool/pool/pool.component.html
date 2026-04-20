@@ -1,0 +1,48 @@
+<!-- ================= POOL DASHBOARD ================= -->
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="w-100" style="max-width: 900px">
+
+    <div class="text-center mb-5">
+      <h1 class="fw-bold text-primary">Welcome to the Pool Platform</h1>
+      <p class="text-muted">Host live quizzes or join instantly with a Game PIN</p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- HOST -->
+      <div class="col-12 col-md-6">
+        <div class="card h-100 shadow border-0">
+          <div class="card-body p-4 text-center">
+            <h3 class="fw-bold mb-3">Create Pool Quiz</h3>
+            <p class="text-muted mb-4">
+              Sign in to create or import quizzes and host live pool games
+            </p>
+
+            <button class="btn btn-primary btn-lg w-100" (click)="goToAuth()">
+              Sign In / Sign Up
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYER -->
+      <div class="col-12 col-md-6">
+        <div class="card h-100 shadow border-0">
+          <div class="card-body p-4 text-center">
+            <h3 class="fw-bold mb-3">Play Pool Quiz</h3>
+            <p class="text-muted mb-4">
+              No login needed. Enter the Game PIN and start playing
+            </p>
+
+            <button class="btn btn-success btn-lg w-100" (click)="joinPool()">
+              Join Live Quiz
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

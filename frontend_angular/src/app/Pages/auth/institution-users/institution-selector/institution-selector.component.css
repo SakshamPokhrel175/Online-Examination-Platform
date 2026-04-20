@@ -1,0 +1,45 @@
+/* .dropdown-item.active {
+  background-color: #eaf3ff;
+  font-weight: bold;
+  border-left: 4px solid #0d6efd;
+}
+
+input.form-control {
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 16px;
+}
+
+
+
+
+ */
+
+ /* institution-selector.component.css */
+
+/* host container */
+:host { display: block; overflow-x: hidden; }
+
+/* dropdown / card radius polish */
+.dropdown .dropdown-menu { border-radius: 0.5rem; }
+
+/* card styling for selected institution */
+.card { border-radius: 1rem; }
+
+/* form controls */
+.form-control { padding: 0.55rem 0.75rem; font-size: 0.95rem; }
+
+/* spinner alignment */
+.spinner-border { vertical-align: text-bottom; }
+
+/* focus outlines for accessibility */
+input:focus, button:focus { outline: 3px solid rgba(13,110,253,0.08); outline-offset: 2px; }
+
+/* responsive tweaks */
+@media (max-width: 575.98px) {
+  .card { margin: 0.5rem; padding: 1rem; }
+  .dropdown { padding: 0 0.5rem; }
+  h4 { font-size: 1.1rem; }
+}

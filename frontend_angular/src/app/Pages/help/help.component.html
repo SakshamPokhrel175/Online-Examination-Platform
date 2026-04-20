@@ -1,0 +1,75 @@
+<div class="help-section min-vh-100 py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold heading">Help & Support</h2>
+      <p class="subheading">Find answers to common questions or reach out to our support team.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- FAQ Accordion -->
+      <div class="col-lg-7">
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item mb-3" *ngFor="let faq of faqs; let i = index">
+            <h2 class="accordion-header" [id]="'heading' + i">
+              <button class="accordion-button collapsed fw-semibold" type="button"
+                data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="false"
+                [attr.aria-controls]="'collapse' + i">
+                {{ faq.question }}
+              </button>
+            </h2>
+            <div [id]="'collapse' + i" class="accordion-collapse collapse"
+              [attr.aria-labelledby]="'heading' + i" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {{ faq.answer }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Support -->
+      <div class="col-lg-5">
+        <div class="card support-card">
+          <div class="card-body">
+            <h5 class="card-title fw-bold mb-3">Contact Support</h5>
+
+            <form #helpForm="ngForm" (ngSubmit)="onSubmit(helpForm)" novalidate>
+              <div class="mb-3">
+                <label for="name" class="form-label fw-medium">Full Name</label>
+                <input name="name" id="name" class="form-control" placeholder="John Doe" required minlength="2"
+                       [(ngModel)]="contact.name" #name="ngModel" />
+                <div *ngIf="name.invalid && (name.dirty || name.touched)" class="form-text text-danger">
+                  Please enter your name (2+ characters).
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="email" class="form-label fw-medium">Email Address</label>
+                <input name="email" type="email" id="email" class="form-control" placeholder="john@example.com"
+                       required email [(ngModel)]="contact.email" #email="ngModel" />
+                <div *ngIf="email.invalid && (email.dirty || email.touched)" class="form-text text-danger">
+                  Please enter a valid email address.
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="message" class="form-label fw-medium">Your Message</label>
+                <textarea name="message" id="message" class="form-control" rows="4"
+                          placeholder="Describe your issue..." required minlength="10"
+                          [(ngModel)]="contact.message" #message="ngModel"></textarea>
+                <div *ngIf="message.invalid && (message.dirty || message.touched)" class="form-text text-danger">
+                  Please enter a message (10+ characters).
+                </div>
+              </div>
+
+              <button type="submit" [disabled]="helpForm.invalid" class="btn btn-outline-primary w-100">
+                Submit Request
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

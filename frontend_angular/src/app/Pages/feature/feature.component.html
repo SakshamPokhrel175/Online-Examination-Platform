@@ -1,0 +1,20 @@
+<div class="container py-5 feature-wrapper">
+  <h2 class="fw-bold mb-4 text-center">Premium Features</h2>
+  <p class="mb-5 text-center text-muted">Explore the most advanced features designed for <strong>secure and scalable</strong> online exams.</p>
+
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let feature of features">
+      <div class="feature-card shadow-sm rounded-4">
+        <i [class]="feature.icon" class="icon mb-3"></i>
+        <h5 class="mt-2 fw-bold text-dark">{{ feature.title }}</h5>
+        <p class="text-muted small">{{ feature.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <button class="btn cta-btn px-4 py-2 rounded-pill fw-semibold shadow-sm" (click)="showMore()">
+      🔍 Explore More
+    </button>
+  </div>
+</div>

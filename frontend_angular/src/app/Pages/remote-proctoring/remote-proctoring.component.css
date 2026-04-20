@@ -1,0 +1,86 @@
+/* Simple & professional light palette (drop-in replacement) */
+:root{
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --muted: #6b7280;
+  --primary: #0b5ea8; /* calm blue */
+  --primary-600: #0d6efd;
+  --soft-shadow: 0 10px 30px rgba(15,23,42,0.06);
+}
+/* Background */
+.remote-bg {
+  background: linear-gradient(180deg, var(--bg) 0%, #eef3f8 100%);
+  color: #0b1220; /* ensure text is dark on the light bg */
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+
+/* Force descendant .text-white and other dark-theme utility classes to behave correctly
+   so we don't have to modify html. This ensures previous class usage won't force dark bg. */
+.remote-bg .text-white,
+.remote-bg.text-white {
+  color: #0b1220 !important;
+}
+.remote-bg .text-white-50 {
+  color: var(--muted) !important;
+}
+
+/* Glass style for images */
+.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--soft-shadow);
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 22px rgba(255,255,255,0.16);
+}
+
+/* Text styling */
+h3 {
+  color: var(--card);
+}
+.text-white-50 {
+  color: rgba(255,255,255,0.72) !important;
+}
+
+/* Animation */
+.glass-card,
+h3,
+p {
+  animation: fadeInUp 0.8s ease both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  h2.display-5 {
+    font-size: 1.9rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+  .glass-card img {
+    border-radius: 12px;
+  }
+}
+
+
+/* Small polish for very small phones */
+@media (max-width: 576px) {
+  .container > .display-5 { font-size: 1.6rem; }
+  .remote-bg p.lead { font-size: .98rem; }
+}

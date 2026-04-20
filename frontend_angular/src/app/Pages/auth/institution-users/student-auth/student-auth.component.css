@@ -1,0 +1,22 @@
+/* student-auth.component.css */
+
+:host { display: block; overflow-x: hidden; }
+
+.bg-primary { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+.card { border-radius: 0.75rem; }
+.form-control { padding: 0.55rem 0.75rem; font-size: 0.95rem; }
+
+.btn-outline-primary.active,
+.btn-outline-primary:active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+input:focus, button:focus { outline: 3px solid rgba(13,110,253,0.08); outline-offset: 2px; }
+
+@media (max-width: 575.98px) {
+  .card { margin: 0.5rem; padding: 1rem; }
+  h2 { font-size: 1.25rem; }
+  .btn-outline-primary { font-size: 0.92rem; padding: 0.45rem 0.6rem; }
+}

@@ -1,0 +1,211 @@
+<div
+  class="container-fluid min-vh-100 d-flex align-items-center justify-content-center bg-light"
+>
+  <div class="row w-100 justify-content-center">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4 p-md-5 text-center">
+          <h2 class="fw-bold mb-3">Host Control Panel</h2>
+
+          <p class="text-muted mb-4">Share this Game PIN with players</p>
+
+          <div *ngIf="isLobby" class="alert alert-primary fw-bold fs-3 mb-4">
+            {{ gamePin }}
+          </div>
+
+          <!-- 🔥 LIVE QUESTION INFO
+          <div *ngIf="currentQuestion" class="mb-3 text-muted">
+            Question {{ currentQuestion.questionNumber }} /
+            {{ currentQuestion.totalQuestions }}
+          </div> -->
+
+          <!-- 🔥 LIVE QUESTION INFO -->
+<div *ngIf="currentQuestion" class="mb-3 text-muted">
+
+  <div>
+    Question {{ currentQuestion.questionNumber }}
+    / {{ currentQuestion.totalQuestions }}
+  </div>
+
+<div *ngIf="isLive" class="fw-bold text-danger fs-4 mb-3">
+  ⏱ {{ timeLeft }} s
+</div>
+
+
+</div>
+
+
+          <!-- 🔥 ADD THIS RIGHT HERE -->
+          <div *ngIf="currentQuestion">
+            <h4 class="fw-bold mt-4">
+              {{ currentQuestion.content }}
+            </h4>
+
+            <div class="mt-3">
+              <div
+                class="border rounded p-2 mb-2"
+                *ngFor="let opt of currentQuestion.options"
+              >
+                {{ opt }}
+              </div>
+            </div>
+
+            <!-- 🏆 LEADERBOARD -->
+<!-- 🏆 LEADERBOARD -->
+<div *ngIf="showLeaderboard" class="mt-4">
+
+  <h3 class="text-center fw-bold mb-4">🏆 Leaderboard</h3>
+
+  <!-- 🥇🥈🥉 PODIUM -->
+  <div *ngIf="players.length >= 3" class="podium-container">
+
+    <!-- 🥈 SECOND -->
+    <div class="podium second">
+      <div class="medal silver">🥈</div>
+      <div class="name">{{ players[1]?.nickname }}</div>
+      <div class="score">{{ players[1]?.score }} pts</div>
+    </div>
+
+    <!-- 🥇 FIRST -->
+    <div class="podium first">
+      <div class="medal gold">🥇</div>
+      <div class="name">{{ players[0]?.nickname }}</div>
+      <div class="score">{{ players[0]?.score }} pts</div>
+    </div>
+
+    <!-- 🥉 THIRD -->
+    <div class="podium third">
+      <div class="medal bronze">🥉</div>
+      <div class="name">{{ players[2]?.nickname }}</div>
+      <div class="score">{{ players[2]?.score }} pts</div>
+    </div>
+
+  </div>
+
+  <!-- 📋 FULL LIST -->
+  <div class="mt-4">
+
+    <div *ngFor="let p of players; let i = index"
+         class="d-flex justify-content-between border rounded p-2 mb-2">
+
+      <div>
+        <strong>
+          {{ i + 1 }}. {{ p.nickname }}
+        </strong>
+      </div>
+
+      <div>
+        {{ p.score }} pts
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="text-center text-muted mt-2">
+    Next question in 5 seconds...
+  </div>
+
+</div>
+
+
+          </div>
+
+          <div *ngIf="isLobby" class="mb-4">
+            <div class="alert alert-info">
+              👥 Players Joined: <strong>{{ playerCount }}</strong>
+            </div>
+
+            <!-- 🔥 PLAYER LIST -->
+            <div *ngIf="players.length > 0" class="mb-3 text-start">
+              <div class="fw-bold mb-2">Joined Players:</div>
+
+              <div class="row g-2">
+                <div class="col-6" *ngFor="let p of players">
+                  <div class="border rounded p-2 bg-light">
+                    👤 {{ p.nickname }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn btn-primary btn-lg w-100"
+              [disabled]="playerCount === 0"
+              (click)="startGameLive()"
+            >
+              🚀 Start Game
+            </button>
+          </div>
+
+          <div *ngIf="isLive" class="d-grid gap-3">
+            <button
+              class="btn btn-success btn-lg"
+              [disabled]="quizEnded"
+              (click)="nextQuestion()"
+            >
+              ▶ Next Question
+            </button>
+
+            <button class="btn btn-outline-danger btn-lg" (click)="endGame()">
+              ⛔ End Game
+            </button>
+          </div>
+
+<!-- ================= ULTRA PREMIUM FINISH SCREEN ================= -->
+<div *ngIf="quizEnded" class="finish-screen">
+
+  <div class="finish-content">
+
+    <h1 class="finish-title">🎉 Game Finished!</h1>
+
+    <!-- 🏆 WINNER ANNOUNCEMENT -->
+    <div *ngIf="players.length > 0" class="winner-box">
+      <div class="winner-label">🏆 WINNER</div>
+      <div class="winner-name">
+        {{ players[0]?.nickname }}
+      </div>
+      <div class="winner-score">
+        {{ players[0]?.score }} pts
+      </div>
+    </div>
+
+    <!-- 🥇🥈🥉 PODIUM -->
+    <div *ngIf="players.length >= 3" class="finish-podium">
+
+      <div class="finish-podium-item second">
+        🥈<br>
+        {{ players[1]?.nickname }}<br>
+        {{ players[1]?.score }}
+      </div>
+
+      <div class="finish-podium-item first">
+        🥇<br>
+        {{ players[0]?.nickname }}<br>
+        {{ players[0]?.score }}
+      </div>
+
+      <div class="finish-podium-item third">
+        🥉<br>
+        {{ players[2]?.nickname }}<br>
+        {{ players[2]?.score }}
+      </div>
+
+    </div>
+
+    <button
+      class="btn btn-light btn-lg mt-4"
+      (click)="endGame()"
+    >
+      ⬅ Back to Dashboard
+    </button>
+
+  </div>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

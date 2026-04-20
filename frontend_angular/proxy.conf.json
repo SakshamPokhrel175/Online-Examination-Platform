@@ -1,0 +1,30 @@
+{
+  "/api": {
+    "target": "https://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/ws": {
+    "target": "https://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "logLevel": "debug"
+  },
+
+  "/ws-proctor": {
+    "target": "https://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "logLevel": "debug"
+  },
+
+  "/uploads": {
+    "target": "https://localhost:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

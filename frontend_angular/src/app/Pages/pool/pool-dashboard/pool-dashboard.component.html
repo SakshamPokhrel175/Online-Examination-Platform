@@ -1,0 +1,117 @@
+<div class="container py-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">🎮 Pool Host Dashboard</h2>
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
+
+  <!-- Create Button -->
+  <div class="mb-4">
+    <button class="btn btn-primary btn-lg" (click)="openCreateModal()">
+      + Create New Pool Quiz
+    </button>
+  </div>
+
+  <!-- Quiz List -->
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let quiz of myQuizzes">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="fw-bold">{{ quiz.title }}</h5>
+          <p class="text-muted small">
+            {{ quiz.questionsCount }} Questions
+          </p>
+
+          <div class="d-flex gap-2">
+            <button
+              class="btn btn-outline-primary btn-sm"
+              [routerLink]="['/quiz-builder', quiz.id]"
+            >
+              Edit
+            </button>
+
+            <button
+              class="btn btn-success btn-sm"
+              (click)="startLive(quiz.id)"
+            >
+              🚀 Start Live
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CREATE QUIZ MODAL -->
+<div class="modal fade" id="createPoolQuizModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header">
+        <h5 class="fw-bold">Create Pool Quiz</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <input
+          class="form-control mb-2"
+          placeholder="Quiz Title"
+          [(ngModel)]="newQuiz.title"
+        />
+
+        <textarea
+          class="form-control mb-3"
+          placeholder="Description"
+          [(ngModel)]="newQuiz.description"
+        ></textarea>
+
+        <!-- 🔽 Import Questions -->
+        <div class="border rounded p-3 bg-light">
+          <label class="form-label fw-semibold small">
+            Import Questions (optional)
+          </label>
+
+          <!-- Template actions -->
+          <div class="d-flex gap-2 mb-2">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="downloadTemplate('csv')"
+            >
+              <i class="bi bi-download"></i> CSV Template
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              (click)="downloadTemplate('txt')"
+            >
+              <i class="bi bi-download"></i> TXT Template
+            </button>
+          </div>
+
+          <input
+            type="file"
+            class="form-control"
+            (change)="onImportFileSelected($event)"
+            accept=".csv,.txt"
+          />
+
+          <div class="form-text text-muted mt-1">
+            Download template → fill questions → upload here
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-primary" (click)="createQuiz()">
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

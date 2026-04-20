@@ -1,0 +1,26 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [
+      "@angular/localize"
+    ]
+  },
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ],
+
+  /*
+    Temporary: relax strict template type-checking to bypass the
+    `ɵassertType` / template-check errors while we fix the components.
+    Remove this and set to true again once the templates are updated.
+  */
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
+}

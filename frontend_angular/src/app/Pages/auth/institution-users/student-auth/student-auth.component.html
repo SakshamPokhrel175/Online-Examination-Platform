@@ -1,0 +1,101 @@
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 pt-4 px-3">
+  <!-- Top Bar -->
+  <div class="w-100 bg-primary text-white py-3 text-center rounded-top shadow-sm">
+    <h2 class="m-0 animate__animated animate__fadeInUp display-4">Student Portal</h2>
+  </div>
+
+  <!-- Logo -->
+  <div class="text-center mb-4">
+    <div class="d-inline-block p-3 bg-white rounded-circle shadow-sm border border-2">
+      <img src="assets/img/student_logo.png" alt="Student Logo"
+           class="img-fluid rounded-circle" style="max-width: 100px; height: auto;"
+           onerror="this.src='assets/img/default-avatar.png'">
+    </div>
+  </div>
+
+  <!-- Institution selector (hidden when institution selected) -->
+  <div class="w-100" style="max-width: 500px;" *ngIf="!selectedInstitution">
+    <div class="card p-3 shadow-sm rounded-3 border-light">
+      <h3 class="text-center mb-4 fw-bold">Select Your Institution</h3>
+      <app-institution-selector (institutionSelected)="onInstitutionSelected($event)"></app-institution-selector>
+    </div>
+  </div>
+
+  <!-- After institution selected: login/signup box -->
+  <div *ngIf="selectedInstitution" class="w-100 mt-4" style="max-width: 500px;">
+    <div class="card p-4 shadow-lg rounded-4">
+      <div class="text-center mb-3">
+        <img *ngIf="selectedInstitution.instituteImage"
+             [src]="getBackendUrl(selectedInstitution.instituteImage)"
+             alt="Logo" width="80" class="mb-2 rounded"
+             (error)="onImageError($event)" />
+        <h4 class="m-0 fw-bold">{{ selectedInstitution.instituteName }}</h4>
+      </div>
+
+      <!-- Inline accessible error -->
+      <div *ngIf="error" class="alert alert-danger" role="alert" aria-live="polite">
+        {{ error }}
+      </div>
+
+      <div class="d-flex gap-2 justify-content-center mb-3">
+        <button class="btn btn-outline-primary" [class.active]="isLogin" (click)="toggleMode(true)">Login</button>
+        <button class="btn btn-outline-primary" [class.active]="!isLogin" (click)="toggleMode(false)">Sign Up</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form *ngIf="isLogin" (ngSubmit)="onLogin()" #loginForm="ngForm" autocomplete="off" novalidate>
+        <div class="mb-3">
+          <input type="email" class="form-control" placeholder="Email" required
+                 [(ngModel)]="loginData.email" name="email" aria-label="Email" />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Password" required
+                 [(ngModel)]="loginData.password" name="password" aria-label="Password" />
+        </div>
+        <button class="btn btn-primary w-100" type="submit" [disabled]="loading" aria-busy="{{loading}}">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Please wait...' : 'LOGIN' }}
+        </button>
+      </form>
+
+      <!-- SIGNUP -->
+      <form *ngIf="!isLogin" (ngSubmit)="onSignup()" #signupForm="ngForm" autocomplete="off" novalidate>
+        <div class="mb-3">
+          <input type="email" class="form-control" placeholder="Email" required
+                 [(ngModel)]="signupData.email" name="email" aria-label="Signup Email" />
+        </div>
+        <div class="mb-3">
+          <input type="text" class="form-control" placeholder="Full name" required
+                 [(ngModel)]="signupData.name" name="name" />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Password" required
+                 [(ngModel)]="signupData.password" name="password" />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Confirm Password" required
+                 [(ngModel)]="signupData.confirmPassword" name="confirmPassword" />
+        </div>
+
+        <input type="hidden" [(ngModel)]="signupData.institutionId" name="institutionId" />
+
+        <button class="btn btn-success w-100" type="submit" [disabled]="loading" aria-busy="{{loading}}">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Registering...' : 'Sign Up as Student' }}
+        </button>
+      </form>
+
+      <div class="mt-3 text-center">
+        <a href="#" class="text-decoration-none d-block mb-2">Forgot your password?</a>
+        <a style="cursor: pointer;" class="text-decoration-none d-block text-danger" (click)="onInstitutionSelected(null)">
+          <i class="bi bi-arrow-left"></i> Choose different institution
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message if no institution selected -->
+  <div *ngIf="!selectedInstitution" class="mt-4 text-muted fs-5 text-center">
+    Please select your institution to proceed.
+  </div>
+</div>

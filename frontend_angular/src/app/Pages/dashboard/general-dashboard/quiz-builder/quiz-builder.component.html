@@ -1,0 +1,192 @@
+<div class="container-fluid bg-light min-vh-100 p-3 p-md-4">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn btn-outline-secondary me-2" (click)="goBack()">
+        <i class="bi bi-arrow-left"></i> Back
+      </button>
+      <h4 class="d-inline-block m-0">
+        Quiz Builder
+        <small class="text-muted">ID: {{ quizId }}</small>
+      </h4>
+    </div>
+
+    <span class="badge bg-primary fs-6">
+      {{ questions.length }} Questions
+    </span>
+  </div>
+
+  <!-- TABS -->
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'QUESTIONS'" (click)="activeTab = 'QUESTIONS'">
+        <i class="bi bi-list-ul me-1"></i> Questions
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 'SETTINGS'" (click)="activeTab = 'SETTINGS'">
+        <i class="bi bi-gear me-1"></i> Settings
+      </button>
+    </li>
+  </ul>
+
+  <!-- ================= QUESTIONS TAB ================= -->
+  <div *ngIf="activeTab === 'QUESTIONS'">
+
+    <!-- EXISTING QUESTIONS -->
+    <div *ngFor="let q of questions; let i = index" class="card shadow-sm mb-3 border-start border-4 border-primary">
+      <div class="card-body position-relative">
+        <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" (click)="deleteQuestion(q.id)">
+          <i class="bi bi-trash"></i>
+        </button>
+
+        <h6 class="text-muted">Question {{ i + 1 }} • {{ q.type }}</h6>
+        <h5>{{ q.content }}</h5>
+
+        <ul *ngIf="q.type === 'MCQ'" class="list-group mt-2">
+          <li *ngFor="let opt of q.options" class="list-group-item"
+            [class.list-group-item-success]="opt === q.correctAnswer">
+            {{ opt }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ADD QUESTION -->
+    <div class="card shadow mb-5 border-top border-4 border-success">
+      <div class="card-body p-4">
+        <h5 class="card-title mb-4">Add New Question</h5>
+
+        <div class="mb-3">
+          <input type="text" class="form-control form-control-lg bg-light border-0 border-bottom rounded-0"
+            placeholder="Question Title / Problem Statement" [(ngModel)]="newQuestion.content">
+        </div>
+
+        <div class="d-flex gap-2 mb-4">
+          <button class="btn btn-sm rounded-pill px-3" [class.btn-dark]="newQuestion.type === 'MCQ'"
+            [class.btn-outline-dark]="newQuestion.type !== 'MCQ'" (click)="setType('MCQ')">
+            <i class="bi bi-list-ul"></i> Multiple Choice
+          </button>
+          <button class="btn btn-sm rounded-pill px-3" [class.btn-dark]="newQuestion.type === 'CODING'"
+            [class.btn-outline-dark]="newQuestion.type !== 'CODING'" (click)="setType('CODING')">
+            <i class="bi bi-code-slash"></i> Coding Problem
+          </button>
+        </div>
+
+        <div *ngIf="newQuestion.type === 'MCQ'" class="animate__animated animate__fadeIn">
+          <div *ngFor="let opt of newQuestion.options; let i = index; trackBy: trackByFn"
+            class="d-flex align-items-center mb-2">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="correctAnswer" [value]="opt"
+                [(ngModel)]="newQuestion.correctAnswer">
+            </div>
+            <input type="text" class="form-control border-0 border-bottom rounded-0 ms-2" placeholder="Option {{i + 1}}"
+              [(ngModel)]="newQuestion.options![i]">
+            <button class="btn btn-link text-muted" (click)="removeOption(i)" *ngIf="newQuestion.options!.length > 2">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <button class="btn btn-link text-decoration-none ps-0" (click)="addOption()">
+            <i class="bi bi-plus-circle"></i> Add Option
+          </button>
+        </div>
+
+        <div *ngIf="newQuestion.type === 'CODING'" class="animate__animated animate__fadeIn">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Allowed Language</label>
+              <select class="form-select" [(ngModel)]="newQuestion.allowedLanguage">
+                <option value="JAVA">Java</option>
+                <option value="PYTHON">Python</option>
+                <option value="CPP">C++</option>
+                <option value="JS">JavaScript</option>
+              </select>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Sample Input</label>
+              <textarea class="form-control bg-light font-monospace" rows="2"
+                [(ngModel)]="newQuestion.sampleInput"></textarea>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label small fw-bold">Sample Output</label>
+              <textarea class="form-control bg-light font-monospace" rows="2"
+                [(ngModel)]="newQuestion.sampleOutput"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card-footer bg-white d-flex justify-content-end p-3">
+        <button class="btn btn-light me-2" (click)="resetForm()">Clear</button>
+        <button class="btn btn-success px-4 fw-bold" (click)="saveQuestion()" [disabled]="isSaving">
+          <span *ngIf="isSaving" class="spinner-border spinner-border-sm me-2"></span>
+          Save Question
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SETTINGS TAB ================= -->
+  <div *ngIf="activeTab === 'SETTINGS'">
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <h5 class="mb-3">Quiz Settings</h5>
+
+        <!-- BASIC INFO -->
+        <h6 class="text-muted">📝 Quiz Details</h6>
+
+        <input type="text" class="form-control mb-2" placeholder="Quiz Title" [(ngModel)]="quiz.title">
+
+        <textarea class="form-control mb-3" rows="3" placeholder="Quiz Description"
+          [(ngModel)]="quiz.description"></textarea>
+
+
+        <!-- TIMER -->
+        <h6 class="text-muted">⏱ Timer</h6>
+        <input type="number" class="form-control mb-2" placeholder="Total Time (minutes)"
+          [(ngModel)]="quiz.totalTimeMinutes">
+
+        <input type="number" class="form-control mb-3" placeholder="Per Question Time (seconds)"
+          [(ngModel)]="quiz.perQuestionTimeSeconds">
+
+        <!-- BEHAVIOR -->
+        <h6 class="text-muted">⚙ Behavior</h6>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="quiz.autoSubmit">
+          <label class="form-check-label">Auto submit on timeout</label>
+        </div>
+
+        <div class="form-check mb-3">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="quiz.shuffleQuestions">
+          <label class="form-check-label">Shuffle questions</label>
+        </div>
+
+        <!-- PROCTORING -->
+        <h6 class="text-muted">🛡 Proctoring</h6>
+        <div class="form-check mb-3">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="quiz.proctoringEnabled">
+          <label class="form-check-label">Enable AI proctoring</label>
+        </div>
+
+        <!-- MODE -->
+        <h6 class="text-muted">🎓 Quiz Mode</h6>
+        <select class="form-select mb-3" [(ngModel)]="quiz.quizMode">
+          <option value="PRACTICE">Practice</option>
+          <option value="GRADED">Graded</option>
+        </select>
+
+        <button class="btn btn-primary" (click)="saveSettings()">
+          Save Settings
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

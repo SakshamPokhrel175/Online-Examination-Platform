@@ -1,0 +1,170 @@
+<div class="card shadow border-0">
+  <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+    <h5 class="m-0 font-weight-bold text-primary"><i class="bi bi-building me-2"></i>Manage Institutions</h5>
+    <button class="btn btn-primary btn-sm shadow-sm" (click)="toggleForm()">
+      <i class="bi" [ngClass]="showForm ? 'bi-x-lg' : 'bi-plus-lg'"></i> {{ showForm ? 'Close Form' : 'Add New' }}
+    </button>
+  </div>
+
+  <div class="card-body">
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+
+    <div *ngIf="showForm" class="bg-light p-4 rounded mb-4 border animate__animated animate__fadeIn">
+      <h6 class="text-uppercase text-muted mb-3">{{ isEditMode ? 'Update Institution' : 'Create New Institution' }}</h6>
+      <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Institution Name</label>
+            <input type="text" class="form-control" [(ngModel)]="InstitutionData.instituteName" name="institute_name"
+              placeholder="e.g. Sharda University" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-bold">Location</label>
+            <input type="text" class="form-control" [(ngModel)]="InstitutionData.instituteLocation"
+              name="institute_location" placeholder="e.g. Noida, India" required />
+          </div>
+          <div class="col-md-12">
+            <label class="form-label small fw-bold">Logo Upload</label>
+            <div class="input-group">
+              <input type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" />
+            </div>
+          </div>
+<!-- ========================= -->
+<!-- Institution Email Domains -->
+<!-- ========================= -->
+<div class="col-md-12">
+  <label class="form-label small fw-bold">
+    Institution Email Domains <span class="text-danger">*</span>
+  </label>
+
+  <div class="input-group mb-2">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="e.g. sharda.ac.in"
+      [(ngModel)]="newDomain"
+      name="newDomain"
+      (keyup.enter)="addDomain()"
+    />
+    <button type="button" class="btn btn-outline-primary" (click)="addDomain()">Add</button>
+  </div>
+
+  <div *ngIf="domains.length === 0" class="alert alert-warning py-2">
+    No domains added. Users will NOT be able to register or log in.
+  </div>
+
+  <div class="d-flex flex-wrap gap-2">
+    <span *ngFor="let d of domains" class="badge bg-success">
+      {{ d }}
+      <i class="bi bi-x ms-1" style="cursor:pointer" (click)="removeDomain(d)"></i>
+    </span>
+  </div>
+
+  <small class="text-muted">Example: sharda.ac.in, iitd.ac.in</small>
+</div>
+
+
+          
+          <div class="col-12" *ngIf="previewUrl">
+            <div class="p-2 border rounded d-inline-block bg-white">
+               <img [src]="previewUrl" alt="Preview" height="60" style="object-fit: contain;" />
+            </div>
+          </div>
+
+          <div class="col-12 d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-outline-secondary" (click)="resetForm()">Reset</button>
+            <button type="submit" class="btn btn-success px-4">
+              {{ isEditMode ? 'Update' : 'Save' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="input-group mb-3">
+      <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+      <input type="text" class="form-control border-start-0" placeholder="Search institutions..." [(ngModel)]="searchText" (input)="applyFilter()">
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Logo</th>
+            <th scope="col">Details</th>
+            <th scope="col" class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inst of filteredInstitutions">
+            <td class="text-muted">{{ inst.id }}</td>
+            <td>
+              <img *ngIf="inst.instituteImage"
+     [src]="getBackendUrl(inst.instituteImage)"
+     class="rounded-circle border shadow-sm"
+     width="45" height="45"
+     style="object-fit: cover;"
+     (error)="onImageError($event)" />
+
+              <div *ngIf="!inst.instituteImage" class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center" style="width: 45px; height: 45px;">
+                {{ inst.instituteName?.charAt(0) }}
+              </div>
+            </td>
+            <td>
+              <div class="fw-bold text-dark">{{ inst.instituteName }}</div>
+              <div class="small text-muted"><i class="bi bi-geo-alt"></i> {{ inst.instituteLocation }}</div>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-light btn-sm me-1 text-primary" (click)="editInstitution(inst)" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-light btn-sm text-danger" (click)="openDeleteModal(inst)" title="Delete">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredInstitutions.length === 0">
+            <td colspan="4" class="text-center py-4 text-muted">
+              No institutions found matching "{{ searchText }}"
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Institution</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to remove <strong>{{ selectedInstitutionToDelete?.instituteName }}</strong>?
+        <br><small class="text-danger">This action cannot be undone.</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body text-center py-4">
+        <div class="display-1 text-success mb-3"><i class="bi bi-check-circle"></i></div>
+        <h5 id="successModalBody">Success!</h5>
+        <button type="button" class="btn btn-success mt-3 px-4" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>

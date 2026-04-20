@@ -1,0 +1,67 @@
+/* Prevent horizontal overflow */
+#wrapper, .container-fluid { overflow-x: hidden; }
+
+/* Sidebar */
+#sidebar {
+  transition: all 0.18s ease;
+  min-width: 250px;
+}
+
+/* Sidebar heading */
+.sidebar-heading { padding-top: 1rem; padding-bottom: 1rem; }
+
+/* List group styling for sidebar */
+.list-group-item {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  padding: 10px 12px;
+  transition: all 0.15s ease;
+}
+.list-group-item:hover:not(.active) {
+  background-color: rgba(255,255,255,0.03);
+  transform: translateX(3px);
+}
+
+/* Active sidebar item */
+.list-group-item.active {
+  background-color: rgba(255,255,255,0.06);
+  font-weight: 600;
+}
+
+/* Cards */
+.card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover { transform: translateY(-3px); }
+
+/* Emphasized border */
+.border-start.border-4 { border-left-width: 0.5rem !important; }
+
+/* Truncate long text */
+.text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Table / child component spacing safety */
+.app-institutions, app-institutions-stats {
+  display: block;
+}
+
+/* Offcanvas body scroll */
+.offcanvas-body { max-height: calc(100vh - 56px); overflow-y: auto; }
+
+/* Accessibility focus */
+button:focus, .list-group-item:focus {
+  outline: 3px solid rgba(13,110,253,0.12);
+  outline-offset: 2px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 575.98px) {
+  .sidebar-heading { font-size: 1rem; padding: 10px; }
+  .card .card-body { padding: 0.9rem; }
+  .navbar .ms-auto { margin-left: auto; }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  #sidebar { position: sticky; top: 56px; }
+}

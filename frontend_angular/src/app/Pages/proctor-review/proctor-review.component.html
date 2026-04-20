@@ -1,0 +1,61 @@
+<div class="container py-4">
+  <div class="d-flex gap-2 mb-3 align-items-center flex-wrap">
+    <input class="form-control w-auto" placeholder="Filter user..." [(ngModel)]="filterUser">
+    <input class="form-control w-auto" placeholder="Filter quiz code..." [(ngModel)]="filterQuiz">
+    <button class="btn btn-primary" (click)="load()">Search</button>
+    <button class="btn btn-outline-secondary" (click)="refresh()">Refresh</button>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-4">Loading...</div>
+
+  <div *ngIf="!loading && lists.length === 0" class="text-center py-5 text-muted">
+    <i class="bi bi-folder-x display-4 mb-3"></i>
+    <div>No captures found.</div>
+  </div>
+
+  <div *ngFor="let item of lists" class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ item.user }}</strong>
+        <div class="small text-muted">{{ item.files.length }} captures</div>
+      </div>
+      <div>
+        <button class="btn btn-sm btn-outline-secondary" (click)="refresh()">Refresh</button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-2">
+        <div class="col-auto" *ngFor="let f of item.files">
+          <div class="card-sm border shadow-sm p-2" style="width:170px;">
+            <div class="small text-truncate mb-2" title="{{ f }}">{{ f }}</div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-primary w-100" (click)="preview(item.user, f)">Preview</button>
+              <button class="btn btn-sm btn-outline-success w-100" (click)="download(item.user, f)">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview modal (Bootstrap) -->
+  <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ previewFileName || 'Preview' }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cleanupPreview()"></button>
+        </div>
+        <div class="modal-body text-center">
+          <img *ngIf="previewUrl" [src]="previewUrl" class="img-fluid" alt="capture preview">
+          <div *ngIf="!previewUrl" class="text-muted">No preview available</div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="cleanupPreview()">Close</button>
+          <button class="btn btn-success" (click)="download('', previewFileName || '')" [disabled]="!previewFileName">Download</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

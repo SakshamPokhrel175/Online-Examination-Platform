@@ -1,0 +1,9 @@
+/* institutions.component.css */
+.card { border-radius: 12px; }
+.table-responsive { margin-top: 0.5rem; }
+
+@media (max-width: 575.98px) {
+  .card-header h5 { font-size: 1rem; }
+  .btn { font-size: 0.9rem; }
+  .input-group .form-control { font-size: 0.92rem; }
+}

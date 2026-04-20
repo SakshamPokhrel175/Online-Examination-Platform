@@ -1,0 +1,60 @@
+<div class="card shadow border-0">
+  <div class="card-header bg-white py-3">
+    <h6 class="m-0 font-weight-bold text-secondary text-uppercase">Institution Insights</h6>
+  </div>
+  <div class="card-body p-0">
+    
+<div *ngIf="loading" class="text-center text-muted py-4">
+  <div class="progress mb-2" style="height: 6px;">
+    <div
+      class="progress-bar progress-bar-striped progress-bar-animated bg-info"
+      style="width: 100%">
+    </div>
+  </div>
+  Loading stats...
+</div>
+
+
+<div
+  *ngFor="let inst of stats"
+  class="mb-3 border-bottom pb-3 cursor-pointer"
+  (click)="openInstitution(inst)">
+
+  <div class="fw-bold">{{ inst.name }}</div>
+
+  <div class="small text-muted d-flex justify-content-between">
+    <span>Students</span>
+    <span class="fw-bold text-primary">{{ inst.studentCount }}</span>
+  </div>
+
+  <div class="small text-muted d-flex justify-content-between">
+    <span>Faculty</span>
+    <span class="fw-bold text-success">{{ inst.facultyCount }}</span>
+  </div>
+
+  <div class="small text-muted d-flex justify-content-between mt-1">
+    <span>Total Users</span>
+    <span class="fw-bold text-dark">
+      {{ inst.studentCount + inst.facultyCount }}
+    </span>
+  </div>
+
+  <!-- ✅ PROGRESS BAR (ADD HERE) -->
+  <div class="progress mt-2" style="height: 6px;">
+    <div
+      class="progress-bar bg-info"
+      role="progressbar"
+      [style.width.%]="(inst.studentCount + inst.facultyCount)">
+    </div>
+  </div>
+
+</div>
+
+
+
+<div *ngIf="!loading && stats.length === 0" class="text-muted text-center">
+  No institution data available
+</div>
+
+  </div>
+</div>

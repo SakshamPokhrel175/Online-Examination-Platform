@@ -1,0 +1,48 @@
+/* Prevent horizontal overflow in tight containers */
+:host { display: block; overflow-x: hidden; }
+
+/* Card minor polish */
+.card { border-radius: 0.5rem; }
+
+/* List items: ensure comfortable spacing and wrap on small screens */
+.list-group-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 0;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* Ensure badges don't overflow */
+.badge.rounded-pill { white-space: nowrap; }
+
+/* Truncate long institution names */
+.text-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Loading center */
+.spinner-border { vertical-align: text-bottom; }
+
+/* Footer small text */
+.card-footer { font-size: 0.85rem; }
+
+/* Responsive tweaks */
+@media (max-width: 575.98px) {
+  .list-group-item { flex-direction: row; align-items: center; gap: 0.5rem; padding-left: 0.8rem; padding-right: 0.8rem; }
+  .badge.fs-6 { font-size: 0.8rem; padding: 0.35rem 0.5rem; }
+  .card-header h6 { font-size: 0.85rem; }
+}
+
+/* Accessibility focus */
+.list-group-item:focus, .list-group-item:active, .list-group-item:focus-within {
+  outline: 3px solid rgba(13,110,253,0.08);
+  outline-offset: 2px;
+}
+
+
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-pointer:hover {
+  background-color: #f8f9fa;
+}

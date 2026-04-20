@@ -1,0 +1,130 @@
+.timer-badge {
+  padding: 10px 18px;
+  border-radius: 999px;
+  transition: background-color 0.3s ease;
+}
+
+/* 🔥 Last 5 seconds pulse */
+.pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(220, 53, 69, 0.6);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.9);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(220, 53, 69, 0.6);
+  }
+}
+
+
+
+.correct {
+  background: #28a745;
+  color: white;
+}
+
+.wrong {
+  background: #dc3545;
+  color: white;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+
+
+.fast-bonus {
+  font-size: 14px;
+  color: #ff5722;
+  font-weight: bold;
+  animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(-15px); opacity: 1; }
+}
+
+@keyframes pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+.podium-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 25px;
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+}
+
+.podium-box {
+  width: 120px;
+  border-radius: 14px;
+  padding: 15px;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  animation: riseUp 0.8s ease forwards;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.first .podium-box {
+  height: 180px;
+  background: linear-gradient(45deg, gold, orange);
+}
+
+.second .podium-box {
+  height: 140px;
+  background: linear-gradient(45deg, silver, gray);
+}
+
+.third .podium-box {
+  height: 120px;
+  background: linear-gradient(45deg, #cd7f32, #a97142);
+}
+
+.medal {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.name {
+  font-size: 14px;
+}
+
+.score {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+@keyframes riseUp {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

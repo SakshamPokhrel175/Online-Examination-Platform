@@ -1,0 +1,44 @@
+<div class="plan-page min-vh-100 py-5">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold mb-2 heading">Subscription Plans</h2>
+      <p class="mb-4 subtext">Choose the plan that best fits your needs. Explore features for institutions, faculty, and students.</p>
+    </div>
+
+    <!-- Cards grid -->
+    <div class="row g-4">
+      <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12" *ngFor="let plan of plans">
+        <div class="card plan-card h-100 border-0 rounded-3">
+          <div class="card-body d-flex flex-column">
+            <div class="mb-3">
+              <h5 class="card-title fw-bold title mb-1">{{ plan.title }}</h5>
+              <p class="card-text text-muted small mb-2">{{ plan.description }}</p>
+            </div>
+
+            <div class="mb-3 mt-auto">
+              <h4 class="fw-bold price mb-1">${{ plan.price }} <small class="text-muted" style="font-weight:600;">/month</small></h4>
+            </div>
+
+            <ul class="list-unstyled mb-3 features-list">
+              <li *ngFor="let feature of plan.features" class="mb-1 d-flex align-items-start">
+                <span class="feature-dot me-2" aria-hidden="true"></span>
+                <span class="text-muted small">{{ feature }}</span>
+              </li>
+            </ul>
+
+            <div class="d-grid mt-3">
+              <button (click)="subscribe(plan)"
+                      class="btn btn-primary text-white fw-semibold py-2 px-3 rounded-pill shadow-sm">
+                Subscribe Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="#" class="btn learn-more-btn btn-outline-secondary py-2 px-4 rounded-pill">🔍 Learn More</a>
+    </div>
+  </div>
+</div>

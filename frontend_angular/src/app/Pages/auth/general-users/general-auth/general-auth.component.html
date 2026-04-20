@@ -1,0 +1,98 @@
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 pt-4 bg-light">
+  <!-- Top Bar -->
+  <div class="w-100 bg-primary text-white py-3 text-center rounded-top shadow-lg">
+    <h2 class="m-0 animate__animated animate__fadeInUp">Welcome to the Quiz Platform</h2>
+  </div>
+
+  <!-- Card -->
+  <div class="w-100" style="max-width: 540px;">
+    <div class="card p-4 shadow-lg rounded-4 mt-3">
+      <div class="d-flex justify-content-center mb-3">
+        <button class="btn btn-outline-primary me-2" [class.active]="isLoginSelected" (click)="toggleForm(true)">
+          Login
+        </button>
+        <button class="btn btn-outline-primary" [class.active]="!isLoginSelected" (click)="toggleForm(false)">
+          Sign Up
+        </button>
+      </div>
+
+      <!-- Login Form -->
+      <div *ngIf="isLoginSelected">
+        <h3 class="text-center mb-3 fw-bold">Login</h3>
+
+        <!-- Inline error (accessible fallback) -->
+        <div *ngIf="error" class="alert alert-danger py-2" role="alert" aria-live="polite">
+          {{ error }}
+        </div>
+
+        <form (ngSubmit)="onLogin()" #loginForm="ngForm" autocomplete="off" novalidate>
+          <div class="mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              required
+              [(ngModel)]="loginData.email"
+              name="email"
+              autocomplete="username"
+              aria-label="Email"
+            />
+          </div>
+
+          <div class="mb-3">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              required
+              [(ngModel)]="loginData.password"
+              name="password"
+              autocomplete="current-password"
+              aria-label="Password"
+            />
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit" [disabled]="loading" aria-live="polite">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Login
+          </button>
+        </form>
+
+        <div class="mt-3 text-center">
+          <a href="#" class="text-decoration-none d-block" (click)="onForgotPassword($event)">Forgot your password?</a>
+          <button class="btn btn-link text-decoration-none d-block mx-auto" (click)="toggleForm(false)">
+            Create an account
+          </button>
+        </div>
+      </div>
+
+      <!-- Signup Form -->
+      <div *ngIf="!isLoginSelected">
+        <h3 class="text-center mb-3 fw-bold">Sign Up</h3>
+
+        <div *ngIf="error" class="alert alert-danger py-2" role="alert" aria-live="polite">
+          {{ error }}
+        </div>
+
+        <form (ngSubmit)="onSignup()" #signupForm="ngForm" autocomplete="off" novalidate>
+          <div class="mb-3">
+            <input type="email" class="form-control" placeholder="Email" required [(ngModel)]="signupData.email" name="email" />
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Password" required [(ngModel)]="signupData.password" name="password" />
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" placeholder="Confirm Password" required [(ngModel)]="signupData.confirmPassword" name="confirmPassword" />
+          </div>
+          <button class="btn btn-primary w-100" type="submit" [disabled]="loading">Sign Up</button>
+        </form>
+
+        <div class="mt-3 text-center">
+          <button class="btn btn-link text-decoration-none d-block mx-auto" (click)="toggleForm(true)">
+            Already have an account? Login
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

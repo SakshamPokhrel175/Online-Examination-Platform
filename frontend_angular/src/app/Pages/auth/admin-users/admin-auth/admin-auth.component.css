@@ -1,0 +1,17 @@
+:host { display: block; overflow-x: hidden; }
+
+.card { border-radius: 0.75rem; max-width: 400px; }
+
+.form-control { padding: 0.6rem 0.75rem; font-size: 0.95rem; }
+
+.btn-primary { font-weight: 600; border-radius: 0.5rem; }
+
+input:focus, button:focus { outline: 3px solid rgba(13,110,253,0.12); outline-offset: 2px; }
+
+.spinner-border { vertical-align: text-bottom; }
+
+@media (max-width: 575.98px) {
+  .card { margin: 1rem; padding: 1.25rem; }
+  .form-control { font-size: 1rem; }
+  h2 { font-size: 1.5rem; }
+}

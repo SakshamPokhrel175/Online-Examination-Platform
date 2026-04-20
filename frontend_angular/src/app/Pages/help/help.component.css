@@ -1,0 +1,116 @@
+/* Simple, professional theme: soft navy + warm gray + clean white */
+
+/* Color variables */
+:root{
+  --bg: #f5f7fa;           /* page background */
+  --panel: #ffffff;        /* card / panel */
+  --muted: #6b7280;        /* muted text */
+  --accent: #0b4a6f;       /* primary accent (soft navy) */
+  --accent-2: #0f6fb8;     /* subtle gradient accent */
+  --glass: rgba(255,255,255,0.72);
+  --shadow: 0 6px 18px rgba(20,30,50,0.06);
+  --border: rgba(15,23,42,0.06);
+}
+
+/* Page */
+.help-section {
+  background: linear-gradient(180deg, #eef3f8 0%, var(--bg) 100%);
+  color: #0b1220;
+  padding-bottom: 4.5rem;
+}
+
+/* Headings */
+.heading {
+  color: var(--accent);
+  font-size: 1.5rem;
+  letter-spacing: -0.2px;
+}
+.subheading {
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+/* Accordion */
+.accordion {
+  background: transparent;
+  border-radius: 12px;
+  padding: 0.5rem;
+}
+.accordion .accordion-item {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.accordion-button {
+  background: transparent;
+  color: #0b1220;
+  padding: 1rem 1.25rem;
+  font-weight: 600;
+  border: none;
+}
+.accordion-button:not(.collapsed) {
+  background: linear-gradient(90deg, rgba(11,74,111,0.06), rgba(15,111,184,0.03));
+}
+.accordion-body {
+  color: #24303f;
+  padding: 0.85rem 1.25rem 1.25rem;
+  font-size: 0.96rem;
+  line-height: 1.5;
+}
+
+/* Support card */
+.support-card {
+  background: linear-gradient(180deg, var(--glass), var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.support-card .card-title {
+  color: #0b1220;
+}
+
+/* Form controls */
+.form-label { color: #24303f; }
+.form-control {
+  background: #fbfdff;
+  border: 1px solid rgba(15,23,42,0.06);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  color: #0b1220;
+}
+.form-control::placeholder { color: #9aa3af; }
+.form-control:focus {
+  border-color: var(--accent-2);
+  box-shadow: 0 6px 18px rgba(15,111,184,0.08);
+  outline: none;
+}
+
+/* Primary button */
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border: none;
+  padding: 0.62rem 0.9rem;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(11,74,111,0.08);
+  font-weight: 600;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Helper text */
+.form-text.text-danger { font-size: 0.85rem; }
+
+/* Responsive spacing */
+@media (max-width: 991.98px) {
+  .heading { font-size: 1.35rem; }
+  .accordion .accordion-item { margin-bottom: 0.6rem; }
+  .help-section { padding-top: 3rem; }
+}
+
+/* Small polish */
+.accordion-item + .accordion-item { margin-top: 0.6rem; }

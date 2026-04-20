@@ -1,0 +1,101 @@
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5 text-center">
+
+          <!-- ================= LIVE SCOREBOARD ================= -->
+          <ng-container *ngIf="!gameEnded">
+
+            <h2 class="fw-bold mb-4">Live Scoreboard</h2>
+
+            <div *ngIf="players.length === 0" class="text-muted">
+              Waiting for players…
+            </div>
+
+            <ul class="list-group list-group-flush" *ngIf="players.length > 0">
+<li
+  class="list-group-item d-flex justify-content-between align-items-center leaderboard-row"
+  *ngFor="let p of players; let i = index"
+  [style.animationDelay]="i * 120 + 'ms'"
+>
+  <div>
+    <strong>#{{ i + 1 }}</strong> {{ p.nickname }}
+  </div>
+
+  <span
+    class="badge fs-6"
+    [ngClass]="{
+      'bg-warning text-dark': i === 0,
+      'bg-secondary': i === 1,
+      'bg-bronze': i === 2,
+      'bg-primary': i > 2
+    }"
+  >
+    {{ p.score }}
+  </span>
+</li>
+
+            </ul>
+
+          </ng-container>
+
+          <!-- ================= WINNER PODIUM ================= -->
+          <ng-container *ngIf="gameEnded">
+
+            <h2 class="fw-bold mb-4">🏆 Winners</h2>
+
+<div class="podium-wrapper mb-5">
+
+  <!-- 🥈 SECOND -->
+  <div class="podium second" *ngIf="topThree[1]">
+    <div class="podium-box silver">
+      <div class="medal">🥈</div>
+      <div class="name">{{ topThree[1].nickname }}</div>
+      <div class="score">{{ topThree[1].score }} pts</div>
+    </div>
+  </div>
+
+  <!-- 🥇 FIRST -->
+  <div class="podium first" *ngIf="topThree[0]">
+    <div class="podium-box gold">
+      <div class="medal">🥇</div>
+      <div class="name">{{ topThree[0].nickname }}</div>
+      <div class="score">{{ topThree[0].score }} pts</div>
+    </div>
+  </div>
+
+  <!-- 🥉 THIRD -->
+  <div class="podium third" *ngIf="topThree[2]">
+    <div class="podium-box bronze">
+      <div class="medal">🥉</div>
+      <div class="name">{{ topThree[2].nickname }}</div>
+      <div class="score">{{ topThree[2].score }} pts</div>
+    </div>
+  </div>
+
+</div>
+
+
+            <!-- REST PLAYERS -->
+            <h5 class="fw-bold mb-3">Final Ranking</h5>
+
+            <ul class="list-group list-group-flush">
+              <li
+                class="list-group-item d-flex justify-content-between"
+                *ngFor="let p of others; let i = index"
+              >
+                <div>#{{ i + 4 }} {{ p.nickname }}</div>
+                <strong>{{ p.score }}</strong>
+              </li>
+            </ul>
+
+          </ng-container>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

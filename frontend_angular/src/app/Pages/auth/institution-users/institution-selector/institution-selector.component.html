@@ -1,0 +1,83 @@
+<div class="dropdown w-100 mx-auto" style="max-width: 500px;">
+  <button class="btn btn-outline-primary w-100 text-start" type="button" data-bs-toggle="dropdown" aria-haspopup="listbox" aria-expanded="false">
+    {{ selectedInstitution ? selectedInstitution.instituteName : 'Select your institution' }}
+  </button>
+
+  <ul class="dropdown-menu w-100 p-3" role="listbox">
+    <input type="text" class="form-control mb-2" placeholder="Search your institution"
+      [(ngModel)]="searchText" (input)="onSearch()" aria-label="Search institutions" />
+
+    <li *ngIf="searchText.length < 3" class="dropdown-item disabled">
+      Enter 3 or more characters
+    </li>
+
+    <li *ngIf="searchText.length >= 3 && filteredInstitutions.length === 0" class="dropdown-item disabled">
+      No results found
+    </li>
+
+    <li *ngFor="let inst of filteredInstitutions"
+        class="dropdown-item d-flex align-items-center gap-2"
+        [class.active]="inst === selectedInstitution"
+        (click)="selectInstitution(inst)"
+        style="cursor: pointer;"
+        role="option"
+        [attr.aria-selected]="inst === selectedInstitution">
+      
+      <img *ngIf="inst.instituteImage" 
+           [src]="getBackendUrl(inst.instituteImage)" 
+           width="30" height="30" 
+           style="object-fit: cover; border-radius: 4px;"
+           alt="Logo"
+           (error)="onImageError($event)" />
+           
+      <div><strong>{{ inst.instituteName }}</strong></div>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="selectedInstitution" class="mt-4 card shadow-lg p-4 mx-auto" style="max-width: 500px; border-radius: 16px;">
+  <div class="text-center mb-3">
+    <img *ngIf="selectedInstitution.instituteImage" 
+         [src]="getBackendUrl(selectedInstitution.instituteImage)" 
+         alt="Logo" 
+         width="80" 
+         class="mb-2"
+         style="object-fit: contain; border-radius: 8px;"
+         (error)="onImageError($event)" />
+         
+    <h4 class="fw-bold">{{ selectedInstitution.instituteName }}</h4>
+  </div>
+
+  <div *ngIf="showLoginSuccess" class="alert alert-success text-center" role="alert">
+    ✅ Login successful! Redirecting to dashboard...
+  </div>
+
+  <!-- accessible inline error -->
+  <div *ngIf="error" class="alert alert-danger" role="alert" aria-live="polite">
+    {{ error }}
+  </div>
+
+  <form (ngSubmit)="login()" #loginForm="ngForm" autocomplete="off" novalidate>
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="Email/User ID"
+        required [(ngModel)]="loginData.userId" name="userId" aria-label="Email or User ID" />
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="Password"
+        required [(ngModel)]="loginData.password" name="password" aria-label="Password" />
+    </div>
+    <button class="btn btn-primary w-100" type="submit" [disabled]="loading">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      {{ loading ? 'Please wait...' : 'LOGIN' }}
+    </button>
+  </form>
+
+  <div class="mt-3 text-center">
+    <a href="#" class="text-decoration-none d-block">Forgot your password?</a>
+    <a href="#" class="text-decoration-none d-block text-danger" (click)="clearInstitution()">Not your institution?</a>
+  </div>
+</div>
+
+<div *ngIf="!selectedInstitution" class="mt-4 text-muted fs-5 text-center">
+  Please select your institution to proceed with login.
+</div>

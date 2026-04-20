@@ -1,0 +1,141 @@
+<div class="container min-vh-100 d-flex align-items-center justify-content-center">
+  <div class="row w-100 justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4 p-md-5">
+
+<!-- RESULT PHASE -->
+<div *ngIf="showResultPhase && correctAnswer" class="text-center mb-4">
+
+
+  <h2 class="text-success fw-bold mb-3">
+    ✅ Correct Answer
+  </h2>
+
+  <h4 class="fw-bold text-primary">
+    {{ correctAnswer }}
+  </h4>
+
+  <div *ngIf="showResultPhase">
+  <app-pool-scoreboard></app-pool-scoreboard>
+</div>
+
+
+</div>
+
+<!-- WAITING STATE -->
+<div *ngIf="!currentQuestion && !showResultPhase && !gameEnded"
+     class="text-center text-muted">
+  Waiting for next question…
+</div>
+
+
+<div *ngIf="gameEnded">
+  <app-pool-scoreboard></app-pool-scoreboard>
+</div>
+
+
+
+<div *ngIf="currentQuestion" class="text-center mb-3">
+
+  <span
+    class="badge fs-5 timer-badge"
+    *ngIf="!showResultPhase"
+    [ngClass]="{
+      'bg-warning': timeLeft > 5,
+      'bg-danger pulse': timeLeft > 0 && timeLeft <= 5
+    }"
+  >
+    ⏱ {{ timeLeft }}s
+  </span>
+
+  <!-- 🎯 POINTS ANIMATION -->
+  <div *ngIf="showPointsAnimation" class="points-popup">
+
+    <div class="points-value">
+      +{{ awardedPoints }} pts
+    </div>
+
+    <div *ngIf="fastBonus" class="fast-bonus">
+      🔥 FAST BONUS!
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+          <!-- QUESTION -->
+          <div *ngIf="currentQuestion">
+
+            <h6 class="text-muted text-center mb-2">
+              Question {{ currentQuestion.questionNumber }}
+              / {{ currentQuestion.totalQuestions }}
+            </h6>
+
+            <h3 class="text-center fw-bold mb-4">
+              {{ currentQuestion.content }}
+            </h3>
+
+            <!-- OPTIONS -->
+            <div class="row g-3">
+              <div
+                class="col-12 col-sm-6"
+                *ngFor="let opt of currentQuestion.options"
+              >
+<button
+  class="btn btn-lg w-100"
+  [ngClass]="{
+    'btn-outline-primary': !showResultPhase,
+    'btn-success': showResultPhase && opt === correctAnswer,
+    'btn-danger': showResultPhase && answered && opt !== correctAnswer
+  }"
+[disabled]="answered || timeLeft === 0 || showResultPhase"
+  (click)="answer(opt)"
+>
+  {{ opt }}
+</button>
+
+              </div>
+            </div>
+
+            <!-- INFO -->
+<!-- ⏳ WAITING FOR OTHER PLAYERS -->
+<div
+  class="text-center mt-4 text-warning fw-bold"
+  *ngIf="answered && timeLeft > 0 && !showResultPhase"
+>
+  ⏳ Waiting for other players…
+</div>
+
+
+<!-- ⏰ TIME UP MESSAGE -->
+<div
+  class="text-center mt-3 text-danger fw-bold"
+*ngIf="timeLeft === 0 && !showResultPhase && currentQuestion"
+>
+  ⏰ Time's up!
+</div>
+
+
+<div
+  class="text-center mt-4 fw-bold text-success"
+  *ngIf="showResultPhase"
+>
+  Correct answer: {{ correctAnswer }}
+</div>
+
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

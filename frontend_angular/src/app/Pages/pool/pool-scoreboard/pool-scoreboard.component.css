@@ -1,0 +1,64 @@
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.podium-box {
+  width: 100%;
+  padding: 20px;
+  color: #000;
+  font-weight: bold;
+  border-radius: 12px;
+  animation: rise 0.8s ease-out forwards;
+}
+
+.first .podium-box {
+  height: 160px;
+  font-size: 1.2rem;
+}
+
+.second .podium-box {
+  height: 120px;
+}
+
+.third .podium-box {
+  height: 100px;
+}
+
+.bg-bronze {
+  background-color: #cd7f32;
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* Leaderboard animation */
+.leaderboard-row {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: slideFadeIn 0.4s ease forwards;
+}
+
+@keyframes slideFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bronze color */
+.bg-bronze {
+  background-color: #cd7f32;
+  color: white;
+}
+

@@ -1,0 +1,165 @@
+:root{
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --panel: #ffffff;   /* Needed for popup background */
+  --muted: #6b7280;
+  --primary: #0b5ea8; /* calm blue */
+  --primary-600: #0d6efd;
+  --soft-shadow: 0 10px 30px rgba(15,23,42,0.06);
+  --accent: #0b4a6f;
+  --accent-2: #0f6fb8;
+}
+
+/* Page background */
+.home-wrapper {
+  background: var(--bg);
+  color: #0b1220;
+  min-height: 100vh;
+  padding-bottom: 3.5rem;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(90deg, rgba(11,90,168,0.06), rgba(15,111,184,0.03));
+  padding-top: 4.5rem;
+  padding-bottom: 3.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+.hero .display-4 {
+  color: #0b1220;
+  font-weight: 700;
+}
+.hero .lead {
+  color: var(--muted);
+}
+
+/* Feature cards */
+.feature-card {
+  background: var(--card);
+  border: 1px solid rgba(11,94,168,0.06);
+  border-radius: 12px;
+  color: #0b1220;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  box-shadow: var(--soft-shadow);
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(11,94,168,0.06);
+}
+.feature-card i {
+  display: block;
+  margin: 0 auto;
+  color: var(--accent-2);
+}
+
+/* Role cards */
+.role-card {
+  background: var(--card);
+  border: 1px solid rgba(15,23,42,0.04);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.04);
+}
+
+/* Buttons */
+.btn-primary {
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 3px 6px rgba(255, 255, 255, 0.1);
+}
+.btn-secondary {
+  background: #fff;
+  color: #0b1220;
+  border: 1px solid rgba(15,23,42,0.06);
+  box-shadow: 0 8px 20px rgba(15,23,42,0.04);
+}
+.btn {
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 3px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Text helpers */
+.text-muted {
+  color: var(--muted) !important;
+}
+
+/* SWEETALERT: Backdrop blur */
+.swal2-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* Popup styling */
+.swal2-popup.swal-role-popup {
+  border-radius: 14px;
+  padding: 22px;
+  background: var(--panel);
+  box-shadow: var(--soft-shadow);
+}
+
+/* Title */
+.role-title {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+/* Role modal button shared styles */
+.swal-btn-general,
+.swal-btn-student,
+.swal-btn-faculty {
+  padding: 10px 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: var(--soft-shadow);
+  color: #fff;
+}
+
+/* Individual Button Colors */
+.swal-btn-general {
+  background: var(--primary);
+}
+.swal-btn-student {
+  background: #198754;
+}
+.swal-btn-faculty {
+  background: #0dcaf0;
+}
+
+/* Hover effect */
+.swal-btn-general:hover,
+.swal-btn-student:hover,
+.swal-btn-faculty:hover {
+  opacity: 0.92;
+}
+
+/* Cancel button */
+.swal2-cancel {
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: 600 !important;
+}
+
+/* Mobile full-width buttons */
+@media (max-width: 575.98px) {
+  .swal-btn-general,
+  .swal-btn-student,
+  .swal-btn-faculty {
+    width: 100%;
+  }
+}
+
+/* Additional Responsive Tweaks */
+@media (max-width: 992px) {
+  .hero {
+    padding-top: 3rem;
+    padding-bottom: 2.25rem;
+  }
+  .hero .display-4 {
+    font-size: 2.2rem;
+  }
+}
+@media (max-width: 576px) {
+  .hero .display-4 { font-size: 1.8rem; }
+  .feature-card i { font-size: 2.2rem; }
+  .feature-card p, .role-card p { font-size: 0.95rem; }
+}

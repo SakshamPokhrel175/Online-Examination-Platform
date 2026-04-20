@@ -1,0 +1,54 @@
+/* Prevent horizontal overflow */
+.container-fluid, #wrapper {
+  overflow-x: hidden;
+}
+
+/* Card spacing and subtle hover */
+.card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card:hover { transform: translateY(-3px); }
+
+/* Borders for emphasis */
+.border-start.border-4 { border-left-width: 0.5rem !important; }
+
+/* Text truncation to avoid overflow */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Small controls spacing */
+.form-check { margin-right: 0.5rem; }
+
+/* Font monospace for sample input/output */
+.font-monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+
+/* Ensure list-group items wrap gracefully on small screens */
+.list-group-item { word-break: break-word; }
+
+/* Buttons and footer responsiveness */
+.card-footer { border-top: none; }
+.card-footer .btn { min-width: 88px; }
+
+/* Offcanvas body not used here but keep safe rule */
+.offcanvas-body { max-height: calc(100vh - 56px); overflow-y: auto; }
+
+/* Accessibility focus */
+button:focus, .form-control:focus {
+  outline: 3px solid rgba(13,110,253,0.12);
+  outline-offset: 2px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 575.98px) {
+  .card .card-body { padding: 0.9rem; }
+  .card-footer { padding: 0.75rem; }
+  .form-control.form-control-lg { font-size: 1rem; }
+}
+
+/* Medium devices adjustments */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .card .card-body { padding: 1rem; }
+}

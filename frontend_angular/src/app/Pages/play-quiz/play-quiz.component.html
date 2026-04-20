@@ -1,0 +1,248 @@
+<!-- ⚠️ GLOBAL WARNING -->
+<div *ngIf="warningMessage" class="proctor-warning">
+  ⚠️ {{ warningMessage }}
+</div>
+
+<div class="secure-page-container">
+  <!-- Top navbar while quiz running -->
+  <nav
+    *ngIf="quizStarted && !isSubmitted"
+    class="navbar navbar-dark shadow-sm fixed-top"
+    [ngClass]="isViolating ? 'bg-danger' : 'bg-dark'"
+  >
+    <div class="container-fluid">
+      <div class="navbar-brand">
+        <h5
+          class="m-0"
+          [class.text-white]="!isViolating"
+          [class.text-warning]="isViolating"
+        >
+          <i class="bi bi-shield-lock-fill me-2"></i>
+          {{ isViolating ? "VIOLATION ACTIVE" : "PROCTORING ACTIVE" }}
+        </h5>
+      </div>
+      <div class="d-flex text-white fw-bold">
+        <span class="me-4" title="Time Remaining">
+          <i class="bi bi-clock-fill"></i> {{ formatTime(timeLeft) }}
+        </span>
+        <span
+          [ngClass]="proctoringViolations > 0 ? 'text-warning' : 'text-success'"
+          title="Violation Count"
+        >
+          <i class="bi bi-eye-fill"></i> STRIKES: {{ proctoringViolations }} /
+          {{ maxViolations }}
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Centered violation overlay (responsive & prominent) -->
+  <div
+    *ngIf="isViolating && quizStarted"
+    class="violation-overlay d-flex align-items-center justify-content-center"
+  >
+    <div class="violation-card text-center p-4 rounded shadow">
+      <div class="display-4 mb-2 text-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h4 class="fw-bold mb-1">CRITICAL MISBEHAVIOR DETECTED</h4>
+      <p class="mb-2">
+        Return focus to the quiz immediately. Auto-submission pending in
+        <strong>{{ gracePeriodSeconds }}</strong> seconds.
+      </p>
+      <div class="small text-muted">
+        If you believe this is a mistake, look at the camera and remain
+        centered.
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <!-- Error / access denied -->
+    <div
+      *ngIf="errorMessage"
+      class="text-center mt-5 animate__animated animate__fadeIn"
+    >
+      <div
+        class="text-white rounded-circle d-inline-flex p-4 mb-3 shadow"
+        [ngClass]="
+          errorTitle === 'Access Denied' ? 'bg-danger' : 'bg-secondary'
+        "
+      >
+        <i
+          class="bi"
+          [ngClass]="
+            errorTitle === 'Access Denied'
+              ? 'bi-shield-lock-fill'
+              : 'bi-exclamation-triangle-fill'
+          "
+          style="font-size: 3rem"
+        ></i>
+      </div>
+      <h3 class="fw-bold" [class.text-danger]="errorTitle === 'Access Denied'">
+        {{ errorTitle }}
+      </h3>
+      <p class="lead text-muted">{{ errorMessage }}</p>
+      <button class="btn btn-outline-dark mt-3 px-4" (click)="goHome()">
+        Go to Dashboard
+      </button>
+    </div>
+
+    <!-- Start screen -->
+    <div
+      *ngIf="!loading && !errorMessage && !quizStarted"
+      class="card shadow-lg border-0 mx-auto text-center p-5"
+      style="max-width: 500px"
+    >
+      <h3 class="fw-bold mb-3">Begin Your Exam</h3>
+      <p class="text-danger fw-bold">⚠️ CRITICAL SECURITY WARNING:</p>
+      <p class="text-muted small">
+        The application is now in lockdown mode. Any attempt to minimize, switch
+        tabs, exit fullscreen, or open Developer Tools will result in an
+        immediate violation and auto-submission.
+      </p>
+
+      <div class="mb-3">
+        <video
+          #proctorVideo
+          autoplay
+          muted
+          playsinline
+          class="rounded shadow"
+          style="
+            width: 320px;
+            height: 240px;
+            background: #000;
+            display: block;
+            margin: 0 auto 12px;
+          "
+        ></video>
+        <div class="text-center small text-muted mb-2">
+          Camera & Microphone Preview — required for proctoring
+        </div>
+        <div class="d-flex justify-content-center gap-2 flex-wrap">
+          <button class="btn btn-outline-primary" (click)="ensureCameraAuth()">
+            Enable Camera & Microphone
+          </button>
+          <button
+            class="btn btn-primary"
+            (click)="startQuiz()"
+            [disabled]="!mediaStream"
+          >
+            Start Exam & Enter Fullscreen
+          </button>
+        </div>
+      </div>
+
+      <div class="text-muted small">
+        If your camera or microphone is not available or you deny access, you
+        will not be allowed to start the exam.
+      </div>
+    </div>
+
+    <!-- Quiz card -->
+    <div
+      *ngIf="!loading && !errorMessage && quizStarted && !isSubmitted"
+      class="card shadow-lg border-0 mx-auto mt-5 pt-3"
+      style="max-width: 700px"
+    >
+      <div
+        class="card-header bg-white py-3 d-flex justify-content-between align-items-center"
+      >
+        <h4 class="m-0">
+          Question {{ currentQuestionIndex + 1 }} of {{ questions.length }}
+        </h4>
+      </div>
+
+      <div class="card-body p-5">
+        <h5 class="fw-bold mb-4">
+          {{ questions[currentQuestionIndex]?.content }}
+        </h5>
+
+        <div
+          *ngIf="questions[currentQuestionIndex]?.type === 'MCQ'"
+          class="d-grid gap-3"
+        >
+          <button
+            *ngFor="let opt of questions[currentQuestionIndex]?.options"
+            class="btn btn-lg text-start border option-btn"
+            [class.selected]="
+              selectedOptions[questions[currentQuestionIndex].id] === opt
+            "
+            (click)="selectOption(questions[currentQuestionIndex].id, opt)"
+          >
+            {{ opt }}
+          </button>
+        </div>
+
+        <div *ngIf="questions[currentQuestionIndex]?.type === 'CODING'">
+          <textarea
+            class="form-control font-monospace bg-light"
+            rows="6"
+            placeholder="// Write your code here..."
+          ></textarea>
+        </div>
+      </div>
+
+      <div
+        class="card-footer bg-white py-3 d-flex justify-content-between flex-wrap gap-2"
+      >
+        <button
+          class="btn btn-outline-secondary"
+          (click)="prevQuestion()"
+          [disabled]="currentQuestionIndex === 0"
+        >
+          Previous
+        </button>
+        <div class="ms-auto d-flex gap-2">
+          <button
+            *ngIf="currentQuestionIndex < questions.length - 1"
+            class="btn btn-primary px-4"
+            (click)="nextQuestion()"
+          >
+            Next
+          </button>
+          <button
+            *ngIf="currentQuestionIndex === questions.length - 1"
+            class="btn btn-success px-4 fw-bold"
+            (click)="submitQuiz()"
+          >
+            Submit Quiz
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submitted screen -->
+    <div
+      *ngIf="isSubmitted"
+      class="text-center animate__animated animate__fadeInUp"
+    >
+      <div class="card shadow border-0 mx-auto p-5" style="max-width: 500px">
+        <div class="display-1 text-success mb-3">
+          <i class="bi bi-trophy-fill"></i>
+        </div>
+        <h2 class="fw-bold mb-3">Quiz Completed!</h2>
+        <p class="lead text-muted">You scored</p>
+        <h1 class="display-3 fw-bold text-primary">
+          {{ score }} / {{ questions.length }}
+        </h1>
+        <button class="btn btn-primary mt-4 px-5" (click)="goHome()">
+          Go to Dashboard
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini live camera preview (bottom-left) -->
+  <div *ngIf="quizStarted && !isSubmitted" class="mini-proctor-wrap">
+    <video
+      #miniProctorVideo
+      autoplay
+      muted
+      playsinline
+      class="mini-proctor-video rounded"
+      [class.violation-border]="isViolating"
+    ></video>
+  </div>
+</div>

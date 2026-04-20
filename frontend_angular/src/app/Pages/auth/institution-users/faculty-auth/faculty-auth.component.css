@@ -1,0 +1,34 @@
+/* faculty-auth.component.css */
+
+/* host & prevent horizontal overflow */
+:host { display: block; overflow-x: hidden; }
+
+/* top banner styling */
+.bg-primary { border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; }
+
+/* card */
+.card { border-radius: 0.75rem; }
+
+/* buttons active state */
+.btn-outline-primary.active,
+.btn-outline-primary:active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+/* form controls */
+.form-control { padding: 0.55rem 0.75rem; font-size: 0.95rem; }
+
+/* spinner alignment */
+.spinner-border { vertical-align: text-bottom; }
+
+/* focus outlines */
+input:focus, button:focus { outline: 3px solid rgba(13,110,253,0.08); outline-offset: 2px; }
+
+/* responsive tweaks */
+@media (max-width: 575.98px) {
+  .card { margin: 0.5rem; padding: 1rem; }
+  h2 { font-size: 1.25rem; }
+  .btn-outline-primary { font-size: 0.92rem; padding: 0.45rem 0.6rem; }
+}
