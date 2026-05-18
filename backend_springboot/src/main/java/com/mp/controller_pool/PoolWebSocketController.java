@@ -81,11 +81,17 @@ public class PoolWebSocketController {
     // =====================================================
     // 2️⃣ HOST MOVES TO NEXT QUESTION
     // =====================================================
- // =====================================================
- // 2️⃣ HOST MOVES TO NEXT QUESTION
- // =====================================================
     @MessageMapping("/pool/next-question")
     public void nextQuestion(@Payload String gamePin) {
+
+        // ✅ ADD THIS BLOCK (VERY IMPORTANT)
+        var session = poolGameService.getSession(gamePin);
+
+        if (!"WAITING".equals(session.getStatus()) && !"RESULT".equals(session.getStatus())) {
+            return; // 🚫 BLOCK unwanted triggers
+        }
+
+        // =============================
 
         poolGameService.prepareNextQuestion(gamePin);
 

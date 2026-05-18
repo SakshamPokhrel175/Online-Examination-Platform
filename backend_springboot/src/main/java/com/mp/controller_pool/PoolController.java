@@ -3,7 +3,7 @@ package com.mp.controller_pool;
 import com.mp.dto_pool.PoolJoinGameRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.mp.dto_pool.PoolScoreboardDTO;
-
+import com.mp.entity.Question;
 import com.mp.entity.Quiz;
 import com.mp.entity.User;
 import com.mp.entity_pool.PoolLivePlayer;
@@ -147,6 +147,78 @@ public class PoolController {
 
      return ResponseEntity.ok(quiz);
  }
+ 
+ 
+//===============================
+//6️⃣ DELETE POOL QUIZ
+//===============================
+@DeleteMapping("/delete/{id}")
+public ResponseEntity<?> deleteQuiz(@PathVariable Long id, Principal principal) {
+
+  Quiz quiz = quizRepository.findById(id)
+          .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+  // 🔐 Security check
+  if (!quiz.getCreatedBy().getEmail().equals(principal.getName())) {
+      return ResponseEntity.status(403).body("Unauthorized");
+  }
+
+  quizRepository.delete(quiz);
+
+  return ResponseEntity.ok("Quiz deleted");
+}
+
+
+//===============================
+//7️⃣ GET QUIZ BY ID
+//===============================
+@PutMapping("/{id}")
+public ResponseEntity<?> updateQuiz(
+        @PathVariable Long id,
+        @RequestBody Quiz updatedQuiz,
+        Principal principal
+) {
+
+    Quiz quiz = quizRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+    if (!quiz.getCreatedBy().getEmail().equals(principal.getName())) {
+        return ResponseEntity.status(403).body("Unauthorized");
+    }
+
+    quiz.setTitle(updatedQuiz.getTitle());
+    quiz.setDescription(updatedQuiz.getDescription());
+
+    // 🔥 CLEAR OLD QUESTIONS
+    if (quiz.getQuestions() != null) {
+        quiz.getQuestions().clear();
+    }
+
+ // 🔥 ADD NEW QUESTIONS (SAFE)
+    if (updatedQuiz.getQuestions() != null) {
+        for (Question q : updatedQuiz.getQuestions()) {
+            q.setQuiz(quiz); // VERY IMPORTANT
+            quiz.getQuestions().add(q);
+        }
+    }
+
+    quiz.setQuestionsCount(quiz.getQuestions().size());
+
+    quizRepository.save(quiz);
+
+    return ResponseEntity.ok(quiz);
+}
+
+@GetMapping("/{id}")
+public ResponseEntity<?> getQuizById(@PathVariable Long id) {
+
+    Quiz quiz = quizRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+    return ResponseEntity.ok(quiz);
+}
+
+
 
 
 }

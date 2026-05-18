@@ -166,5 +166,30 @@ public class QuizService {
 	    quiz.setQuestionsCount(quiz.getQuestionsCount() + imported);
 	    repository.save(quiz);
 	}
+	
+	
+	public Quiz updateQuizSettings(Long id, Quiz updated) {
+
+	    // 🔍 Get existing quiz
+	    Quiz quiz = repository.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Quiz not found"));
+
+	    // ✅ BASIC INFO (🔥 THIS FIXES YOUR BUG)
+	    quiz.setTitle(updated.getTitle());
+	    quiz.setDescription(updated.getDescription());
+
+	    // ✅ TIMER
+	    quiz.setTotalTimeMinutes(updated.getTotalTimeMinutes());
+	    quiz.setPerQuestionTimeSeconds(updated.getPerQuestionTimeSeconds());
+
+	    // ✅ BEHAVIOR
+	    quiz.setAutoSubmit(updated.isAutoSubmit());
+	    quiz.setShuffleQuestions(updated.isShuffleQuestions());
+	    quiz.setProctoringEnabled(updated.isProctoringEnabled());
+	    quiz.setQuizMode(updated.getQuizMode());
+
+	    // 💾 Save to DB
+	    return repository.save(quiz);
+	}
 
 }

@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
+import { NgZone } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/AuthService/auth.service';
@@ -30,6 +32,8 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
   @ViewChild('miniProctorVideo', { static: false })
   miniProctorVideo!: ElementRef<HTMLVideoElement>;
 
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
+
   // Base API (removes any trailing slashes)
   private api = (environment.apiBase || '').replace(/\/+$/, '');
 
@@ -39,6 +43,8 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
   questions: any[] = [];
   currentQuestionIndex = 0;
   selectedOptions: { [key: number]: string } = {};
+
+  private devtoolsInterval: any; // ✅ ADD THIS
 
   isSubmitted = false;
   score = 0;
@@ -53,9 +59,11 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
 
   // UX strike display
   proctoringViolations = 0;
-  maxViolations = 1000;
+  maxViolations = 10;
   isProctoringActive = false;
   violationCount: number = 0; // ✅ ADD HERE
+
+  private tabSwitchLock = false;
 
   // Immediate strikes counter (for critical events)
   private strikeCounter = 0;
@@ -110,11 +118,55 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
   expiresAt: number | null = null;
 
   private visibilityHandler = this.handleVisibilityChange.bind(this);
-  private fullscreenHandler = this.handleFullscreenChange.bind(this);
+  private fullscreenHandler = () => {
+    console.log('FULLSCREEN EVENT FIRED'); // 👈 ADD THIS
 
-  // use arrow property to avoid "method not found at initializer" issues
-  private keyHandler = (e: KeyboardEvent) => this.handleKeyDown(e);
-  private contextMenuHandler = (e: Event) => e.preventDefault();
+    if (!document.fullscreenElement) {
+      console.log('EXIT FULLSCREEN DETECTED');
+
+      this.handleDetectionViolation('Exited fullscreen mode', true);
+
+      setTimeout(() => this.enterFullscreen(), 500);
+    }
+  };
+
+  private blurLock = false;
+  private violationCooldown = false;
+
+  private blurHandler = () => {
+    if (!this.quizStarted) return;
+
+    console.log('WINDOW BLUR DETECTED');
+
+    this.handleDetectionViolation('Window focus lost (ALT+TAB)', true);
+  };
+
+  private contextMenuHandler = (e: Event) => {
+    e.preventDefault();
+    this.handleDetectionViolation('Right click blocked', true);
+  };
+
+  private keyHandler = (e: KeyboardEvent) => {
+    console.log('KEY:', e.key);
+
+    // Windows key
+    if (e.key === 'Meta' || e.code === 'MetaLeft' || e.code === 'MetaRight') {
+      console.log('WINDOWS KEY DETECTED');
+      this.handleDetectionViolation('Windows key pressed', true);
+      return;
+    }
+
+    // DevTools
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+      (e.ctrlKey && e.key === 'u')
+    ) {
+      e.preventDefault();
+      this.handleDetectionViolation('DevTools attempt', true);
+    }
+  };
+
   private copyPasteHandler = (e: Event) => e.preventDefault();
 
   // head-movement tracking
@@ -136,6 +188,8 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private proctorSocket: ProctoringSocketService,
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -143,10 +197,10 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
     this.decodeTokenForRole();
     this.loadQuizData();
 
-    // 🔒 START CAMERA IMMEDIATELY FOR SECURITY
+    // 🔒 Camera pre-check
     this.ensureCameraAuth();
 
-    // 🔒 Internet connection monitoring
+    // 🌐 Internet monitoring (allowed here)
     window.addEventListener('offline', () => {
       if (this.quizStarted) {
         this.handleDetectionViolation('Internet connection lost.', true);
@@ -157,52 +211,13 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
     window.addEventListener('online', () => {
       console.log('Internet reconnected');
     });
-
-    document.addEventListener('visibilitychange', this.visibilityHandler);
-    document.addEventListener('fullscreenchange', this.fullscreenHandler);
-
-    // 🔒 Detect ALT+TAB or window switching
-    window.addEventListener('blur', () => {
-      if (this.quizStarted) {
-        this.handleDetectionViolation(
-          'Window focus lost (possible ALT+TAB).',
-          true,
-        );
-        this.sendEvidenceSnapshot('window_focus_lost', true);
-      }
-    });
-
-    // System lockdown listeners
-    document.addEventListener('contextmenu', this.contextMenuHandler);
-    document.addEventListener('copy', this.copyPasteHandler);
-    document.addEventListener('cut', this.copyPasteHandler);
-    document.addEventListener('paste', this.copyPasteHandler);
-    document.addEventListener('keydown', this.keyHandler);
-
-    // devtools probing
-    setInterval(() => {
-      try {
-        const threshold = 160;
-        if (
-          window.outerWidth - window.innerWidth > threshold ||
-          window.outerHeight - window.innerHeight > threshold
-        ) {
-          this.handleDetectionViolation(
-            'Developer tools opened (detected heuristically).',
-            true,
-          );
-          this.sendEvidenceSnapshot('devtools_attempt', true);
-        }
-      } catch (e) {
-        /* ignore */
-      }
-    }, 1500);
   }
 
   ngOnDestroy(): void {
     if (this.intervalId) clearInterval(this.intervalId);
     if (this.captureIntervalId) clearInterval(this.captureIntervalId);
     if (this.countdownTickId) clearInterval(this.countdownTickId);
+    if (this.devtoolsInterval) clearInterval(this.devtoolsInterval);
 
     clearTimeout(this.violationTimer);
     clearTimeout(this.headResetTimer);
@@ -223,6 +238,10 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
 
     // ✅ PERFECT
     this.proctorSocket.disconnect();
+
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
   }
 
   // -------------------------
@@ -289,7 +308,7 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
       }
 
       // start periodic capture immediately so we capture before the user clicks Start
-      this.startPeriodicCapture();
+      this.startAutoCapture();
 
       // preload models from CDN (non-blocking)
       this.loadFaceApiModels().catch((e) =>
@@ -756,10 +775,86 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
   // -------------------------
   // Detection -> violation wiring
   // -------------------------
-  private handleDetectionViolation(message: string, isCritical: boolean) {
-    this.showWarning(message); // 🔥 add this line
+  //   private handleDetectionViolation(message: string, isCritical: boolean) {
+  //     console.log('VIOLATION CALLED:', message); // ✅ ADD HERE
 
-    // ✅ ONLY SEND, DO NOT COUNT TWICE
+  //   console.log('isCritical value:', isCritical); // 👈 ADD THIS
+  //     this.showWarning(message); // 🔥 add this line
+
+  //     // ✅ ONLY SEND, DO NOT COUNT TWICE
+  //     if (!message.includes('client')) {
+  //       this.sendWebSocketAlert(message, isCritical);
+  //     }
+
+  //     this.isViolating = true;
+
+  //     clearTimeout(this.violationTimer);
+
+  //     // 🔥 FORCE UI REFRESH
+  //     setTimeout(() => {
+  //       this.isViolating = true;
+  //     }, 10);
+
+  //     this.violationTimer = setTimeout(() => {
+  //       this.isViolating = false;
+  //     }, this.gracePeriodSeconds * 1000);
+
+  // if (isCritical) {
+  //   this.ngZone.run(() => {
+  //     this.strikeCounter++;
+  //     this.proctoringViolations = this.strikeCounter;
+
+  //     console.log('CRITICAL STRIKE TRIGGERED');
+  //     console.log('STRIKE COUNT:', this.strikeCounter);
+
+  //     this.sendEvidenceSnapshot(
+  //       'critical_' + message.replace(/\s+/g, '_').toLowerCase(),
+  //       true
+  //     );
+
+  //     // ✅ MUST be true (critical)
+  //     this.handleViolation(message, true);
+
+  //     if (this.strikeCounter >= this.maxViolations) {
+  //       this.autoSubmitQuiz();
+  //     }
+  //   });
+
+  //   return;
+  // }
+
+  //     // ✅ NON-CRITICAL FLOW (RESTORE THIS)
+  //     this.strikeCounter++;
+  //     this.proctoringViolations = this.strikeCounter;
+
+  //     console.log('STRIKE COUNT:', this.strikeCounter);
+
+  //     // ✅ CHECK LIMIT
+  //     if (this.strikeCounter >= this.maxViolations) {
+  //       this.handleViolation(message, true);
+  //       this.autoSubmitQuiz();
+  //       return;
+  //     }
+
+  //     // normal flow
+  //     if (!this.isViolating) this.startGraceCountdown();
+  //     this.handleViolation(message, false);
+  //   }
+
+  private handleDetectionViolation(message: string, isCritical: boolean) {
+    // 🚫 STOP MULTIPLE TRIGGERS
+    if (this.violationCooldown) {
+      console.log('⚠️ Duplicate violation blocked');
+      return;
+    }
+
+    this.violationCooldown = true;
+
+    console.log('VIOLATION CALLED:', message);
+    console.log('isCritical value:', isCritical);
+
+    this.showWarning(message);
+
     if (!message.includes('client')) {
       this.sendWebSocketAlert(message, isCritical);
     }
@@ -768,7 +863,6 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
 
     clearTimeout(this.violationTimer);
 
-    // 🔥 FORCE UI REFRESH
     setTimeout(() => {
       this.isViolating = true;
     }, 10);
@@ -777,30 +871,39 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
       this.isViolating = false;
     }, this.gracePeriodSeconds * 1000);
 
-    if (isCritical) {
+    console.log('BEFORE INCREMENT:', this.strikeCounter);
+    this.ngZone.run(() => {
       this.strikeCounter++;
       this.proctoringViolations = this.strikeCounter;
+
+      console.log('🔥 STRIKE COUNT:', this.strikeCounter);
+
+      this.cdr.detectChanges(); // 🔥 ADD THIS LINE
+
       this.sendEvidenceSnapshot(
         'critical_' + message.replace(/\s+/g, '_').toLowerCase(),
         true,
       );
-      this.handleViolation(message, true);
-      return;
-    }
 
-    this.strikeCounter++;
-    // ✅ ALWAYS INCREMENT HERE
-    this.proctoringViolations = this.strikeCounter;
+      this.handleViolation(message, isCritical);
 
-    if (this.strikeCounter >= this.maxViolations) {
-      this.handleViolation(message, true);
-      return;
-    }
+      if (this.strikeCounter >= this.maxViolations) {
+        this.autoSubmitQuiz();
+      }
 
-    if (!this.isViolating) this.startGraceCountdown();
-    this.handleViolation(message, false);
+      console.log('BEFORE INCREMENT:', this.strikeCounter);
+    });
+
+    // 🔓 UNLOCK AFTER 2 SECONDS
+    setTimeout(() => {
+      this.violationCooldown = false;
+    }, 2000);
   }
 
+  autoSubmitQuiz() {
+    alert('Too many violations. Auto submitting...');
+    this.submitQuiz();
+  }
   // compute Eye Aspect Ratio (EAR)
   private computeEAR(eyePoints: any[]): number {
     if (!eyePoints || eyePoints.length < 6) return 1;
@@ -1237,10 +1340,21 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
   }
 
   handleVisibilityChange() {
+    console.log('VISIBILITY CHANGE FIRED');
+
     if (document.visibilityState === 'hidden') {
-      this.handleDetectionViolation('Leaving the quiz window/tab.', false);
-      this.sendEvidenceSnapshot('visibility_hidden', false);
-    } else this.resetViolationState();
+      if (this.tabSwitchLock) return;
+
+      this.tabSwitchLock = true;
+
+      this.handleDetectionViolation('Leaving the quiz window/tab.', true);
+
+      setTimeout(() => {
+        this.tabSwitchLock = false;
+      }, 3000);
+    }
+
+    // ❌ DO NOTHING on visible
   }
 
   handleFullscreenChange() {
@@ -1249,6 +1363,21 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
       this.sendEvidenceSnapshot('exit_fullscreen', true);
     } else this.resetViolationState();
   }
+  timerInterval: any;
+startTimer() {
+  console.log('🚀 Timer START with:', this.timeLeft);
+
+  this.timerInterval = setInterval(() => {
+    console.log('⏱ Running timeLeft:', this.timeLeft);
+
+    if (this.timeLeft > 0) {
+      this.timeLeft--;
+    } else {
+      clearInterval(this.timerInterval);
+      console.log('⏰ Time up!');
+    }
+  }, 1000);
+}
 
   loadQuizData() {
     this.loading = true;
@@ -1267,37 +1396,38 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
             return;
           }
 
+          // ✅ Set title
           this.quizTitle = quiz?.title || quiz?.name || null;
+// ---------------- TIMER LOGIC ----------------
 
-          // ---------------- TIMER LOGIC ----------------
+const totalMinutes = Number(quiz?.totalTimeMinutes);
 
-          const totalMinutes = Number(quiz?.totalTimeMinutes);
-          const perQuestionSeconds = Number(quiz?.perQuestionTimeSeconds);
-          const questionCount = Number(quiz?.questionsCount);
+// 🔍 Debug logs
+console.log('Backend timer:', totalMinutes);
 
-          // Priority 1: Total quiz timer
-          if (!isNaN(totalMinutes) && totalMinutes > 0) {
-            this.timeLeft = totalMinutes * 60;
-          }
+// Set timer
+if (!isNaN(totalMinutes) && totalMinutes > 0) {
+  this.timeLeft = totalMinutes * 60;
+} else {
+  console.warn('⚠️ Using fallback timer (60 min)');
+  this.timeLeft = 60 * 60;
+}
 
-          // Priority 2: Per-question timer
-          else if (
-            !isNaN(perQuestionSeconds) &&
-            perQuestionSeconds > 0 &&
-            questionCount > 0
-          ) {
-            this.timeLeft = perQuestionSeconds * questionCount;
-          }
+// ✅ THIS IS THE LINE YOU ASKED
+console.log('✅ timeLeft after API set:', this.timeLeft);
 
-          // Priority 3: Default fallback
-          else {
-            console.warn(
-              'Quiz timer missing from backend. Using default 60 minutes.',
-            );
-            this.timeLeft = 60 * 60;
-          }
+// 🔍 Confirm value
+console.log('timeLeft set to:', this.timeLeft);
 
-          // Load questions
+// ✅ Clear old timer
+if (this.timerInterval) {
+  clearInterval(this.timerInterval);
+}
+
+// ✅ Start timer ONCE
+this.startTimer();
+
+          // ---------------- LOAD QUESTIONS ----------------
           if (quiz?.id != null) {
             this.http
               .get<any[]>(`${this.api}/api/questions/quiz/${quiz.id}`)
@@ -1305,6 +1435,7 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
                 next: (qs) => {
                   this.questions = qs || [];
                   this.loading = false;
+                    this.startAutoCapture();
                 },
                 error: () => {
                   this.loading = false;
@@ -1319,11 +1450,11 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
           }
         },
 
-        // ✅ THIS IS THE FIXED ERROR BLOCK
+        // ---------------- ERROR HANDLING ----------------
         error: (err: any) => {
           this.loading = false;
 
-          // 🔒 BLOCK RETAKE AT ENTRY (IMPORTANT)
+          // 🔒 Retake blocked
           if (err?.error?.reason === 'RETAKE_NOT_ALLOWED') {
             this.errorTitle = 'Retake Not Allowed';
             this.errorMessage =
@@ -1347,6 +1478,10 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
       });
   }
 
+  private focusHandler = () => {
+    console.log('WINDOW FOCUS RETURNED');
+  };
+
   async startQuiz() {
     try {
       await this.startCamera();
@@ -1357,7 +1492,7 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Build session folder name using quiz start time + quiz title + quiz code
+    // session name
     const startIso = new Date().toISOString().replace(/[:.]/g, '-');
     const title = (this.quizTitle || '').trim() || 'quiz';
     const safeTitle = title.replace(/[^\w\- ]+/g, '').replace(/\s+/g, '_');
@@ -1366,56 +1501,112 @@ export class PlayQuizComponent implements OnInit, OnDestroy {
 
     this.enterFullscreen();
     this.isProctoringActive = true;
-    if (!this.timeLeft || this.timeLeft <= 0) {
-      console.error('Invalid quiz timer. Blocking quiz start.');
-      return;
-    }
     this.quizStarted = true;
 
-    // 🔥 ADD THIS BLOCK HERE
+    if (!this.timeLeft || this.timeLeft <= 0) {
+      console.error('Invalid quiz timer.');
+      return;
+    }
+
+    // 🔥 SOCKET
     this.proctorSocket.connect(this.quizCode, (data) => {
-      console.log('🚨 LIVE ALERT FROM SERVER:', data);
+      console.log('🚨 SERVER ALERT:', data);
 
-      this.showWarning(data.message);
-
-      // ✅ ADD THIS
-      this.isViolating = true;
-
-      if (data.type === 'CRITICAL') {
-        this.strikeCounter++;
-        this.proctoringViolations = this.strikeCounter;
+      // ONLY SHOW WARNING
+      if (data?.message) {
+        this.showWarning(data.message);
       }
 
-      // optional auto hide
-      clearTimeout(this.violationTimer);
-
-      this.violationTimer = setTimeout(() => {
-        this.isViolating = false;
-      }, this.gracePeriodSeconds * 1000);
+      // ❌ DO NOT increment strike from backend
     });
 
-    // ensure mini preview attached
+    // 🎥 attach camera preview
     setTimeout(() => {
-      try {
-        if (this.miniProctorVideo?.nativeElement && this.mediaStream)
-          this.miniProctorVideo.nativeElement.srcObject = this.mediaStream;
-      } catch (e) {
-        /* ignore */
+      if (this.miniProctorVideo?.nativeElement && this.mediaStream) {
+        this.miniProctorVideo.nativeElement.srcObject = this.mediaStream;
       }
     }, 50);
 
-    // timer
-    this.intervalId = setInterval(() => {
-      if (this.timeLeft > 0) this.timeLeft--;
-      else this.autoSubmit();
-    }, 1000);
+// ⏱ timer
+this.intervalId = setInterval(() => {
+  if (this.timeLeft > 0) this.timeLeft--;
+  else this.autoSubmit();
+}, 1000);
 
-    // ensure periodic capture is running with the new session
-    this.startPeriodicCapture();
+// ❌ OLD (remove if not needed)
+// this.startPeriodicCapture();
 
-    // start detection
-    setTimeout(() => this.startImmediateDetection(), 200);
+// ✅ ADD THIS
+this.startAutoCapture();
+
+setTimeout(() => this.startImmediateDetection(), 200);
+
+    // =========================
+    // 🔒 ADD ALL LISTENERS HERE ONLY
+    // =========================
+
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+    document.addEventListener('fullscreenchange', this.fullscreenHandler);
+
+    window.addEventListener('blur', this.blurHandler);
+    window.addEventListener('focus', this.focusHandler);
+
+    document.addEventListener('contextmenu', this.contextMenuHandler);
+    document.addEventListener('keydown', this.keyHandler);
+    document.addEventListener('copy', this.copyPasteHandler);
+    document.addEventListener('cut', this.copyPasteHandler);
+    document.addEventListener('paste', this.copyPasteHandler);
+
+    // 🔍 DEVTOOLS DETECTION (KEEP HERE)
+    this.devtoolsInterval = setInterval(() => {
+      const threshold = 160;
+      if (
+        window.outerWidth - window.innerWidth > threshold ||
+        window.outerHeight - window.innerHeight > threshold
+      ) {
+        this.handleDetectionViolation(
+          'Developer tools opened (detected heuristically).',
+          true,
+        );
+      }
+    }, 1500);
   }
+
+  startAutoCapture() {
+  this.captureIntervalId = setInterval(() => {
+    this.captureImage();
+  }, 5000); // 👉 every 5 sec (change to 60000 for 1 min)
+}
+
+captureImage() {
+  const video = this.miniProctorVideo.nativeElement;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.drawImage(video, 0, 0);
+
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+
+    const formData = new FormData();
+    formData.append('capture', blob, 'capture.jpg');
+    formData.append('quizCode', this.quizCode);
+
+    this.http.post(`${this.api}/api/proctor/capture`, formData)
+      .subscribe({
+        next: () => console.log('📸 Captured'),
+        error: () => console.log('❌ Capture failed')
+      });
+
+  }, 'image/jpeg');
+}
+
+
 
   private enterFullscreen() {
     const element = document.documentElement as any;

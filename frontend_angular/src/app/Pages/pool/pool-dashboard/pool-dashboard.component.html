@@ -1,53 +1,56 @@
 <div class="container py-5">
-
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold">🎮 Pool Host Dashboard</h2>
     <button class="btn btn-danger" (click)="logout()">Logout</button>
   </div>
 
-  <!-- Create Button -->
+  <!-- Create -->
   <div class="mb-4">
     <button class="btn btn-primary btn-lg" (click)="openCreateModal()">
       + Create New Pool Quiz
     </button>
   </div>
 
-  <!-- Quiz List -->
+  <!-- List -->
   <div class="row g-4">
     <div class="col-md-4" *ngFor="let quiz of myQuizzes">
       <div class="card shadow-sm h-100">
         <div class="card-body">
           <h5 class="fw-bold">{{ quiz.title }}</h5>
-          <p class="text-muted small">
-            {{ quiz.questionsCount }} Questions
-          </p>
+          <p class="text-muted small">{{ quiz.questionsCount }} Questions</p>
 
-          <div class="d-flex gap-2">
+          <div class="d-flex gap-2 flex-wrap">
             <button
               class="btn btn-outline-primary btn-sm"
-              [routerLink]="['/quiz-builder', quiz.id]"
+              (click)="openEditModal(quiz)"
             >
-              Edit
+              ✏️ Edit
             </button>
 
             <button
               class="btn btn-success btn-sm"
-              (click)="startLive(quiz.id)"
+              (click)="startLive(quiz.id || quiz._id)"
             >
               🚀 Start Live
+            </button>
+
+            <button
+              class="btn btn-outline-danger btn-sm"
+              (click)="deleteQuiz(quiz.id || quiz._id)"
+            >
+              🗑 Delete
             </button>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- CREATE QUIZ MODAL -->
+<!-- ================= CREATE MODAL ================= -->
 <div class="modal fade" id="createPoolQuizModal">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
+    <div class="modal-content shadow border-0">
       <div class="modal-header">
         <h5 class="fw-bold">Create Pool Quiz</h5>
         <button class="btn-close" data-bs-dismiss="modal"></button>
@@ -56,60 +59,131 @@
       <div class="modal-body">
         <input
           class="form-control mb-2"
-          placeholder="Quiz Title"
+          placeholder="Title"
           [(ngModel)]="newQuiz.title"
         />
-
         <textarea
           class="form-control mb-3"
           placeholder="Description"
           [(ngModel)]="newQuiz.description"
         ></textarea>
 
-        <!-- 🔽 Import Questions -->
-        <div class="border rounded p-3 bg-light">
-          <label class="form-label fw-semibold small">
-            Import Questions (optional)
-          </label>
-
-          <!-- Template actions -->
-          <div class="d-flex gap-2 mb-2">
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="downloadTemplate('csv')"
-            >
-              <i class="bi bi-download"></i> CSV Template
-            </button>
-
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-sm"
-              (click)="downloadTemplate('txt')"
-            >
-              <i class="bi bi-download"></i> TXT Template
-            </button>
-          </div>
-
-          <input
-            type="file"
-            class="form-control"
-            (change)="onImportFileSelected($event)"
-            accept=".csv,.txt"
-          />
-
-          <div class="form-text text-muted mt-1">
-            Download template → fill questions → upload here
-          </div>
-        </div>
+        <input
+          type="file"
+          class="form-control"
+          (change)="onImportFileSelected($event)"
+        />
       </div>
 
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">
           Cancel
         </button>
-        <button class="btn btn-primary" (click)="createQuiz()">
-          Create
+        <button class="btn btn-primary" (click)="createQuiz()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= EDIT MODAL (FULL QUESTION EDITOR) ================= -->
+<div class="modal fade" id="editPoolQuizModal">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content shadow border-0">
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h5 class="fw-bold">Edit Quiz</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body">
+        <!-- BASIC INFO -->
+        <input
+          class="form-control mb-2"
+          placeholder="Quiz Title"
+          [(ngModel)]="editQuizData.title"
+        />
+
+        <textarea
+          class="form-control mb-3"
+          placeholder="Description"
+          [(ngModel)]="editQuizData.description"
+        ></textarea>
+
+        <hr />
+
+        <!-- QUESTIONS -->
+        <h5 class="fw-bold mb-3">🧠 Questions</h5>
+        <!-- ✅ ADD HERE -->
+        <div
+          *ngIf="!editQuizData.questions?.length"
+          class="text-center text-muted py-4"
+        >
+          No questions yet.<br />
+          Click "Add Question" below 👇
+        </div>
+
+        <div
+          *ngFor="let q of editQuizData.questions; let i = index"
+          class="border rounded p-3 mb-3 bg-light"
+        >
+          <input
+            class="form-control mb-2"
+            [(ngModel)]="q.content"
+            placeholder="Enter question"
+          />
+
+          <!-- Options -->
+          <div
+            *ngFor="let opt of q.options; let j = index"
+            class="d-flex gap-2 mb-1"
+          >
+            <input
+              class="form-control"
+              [(ngModel)]="q.options[j]"
+              placeholder="Option {{ j + 1 }}"
+            />
+
+            <button class="btn btn-danger btn-sm" (click)="removeOption(i, j)">
+              ❌
+            </button>
+          </div>
+
+          <button
+            class="btn btn-sm btn-outline-secondary mt-1"
+            (click)="addOption(i)"
+          >
+            + Add Option
+          </button>
+
+          <!-- Correct Answer -->
+          <input
+            class="form-control mt-2"
+            [(ngModel)]="q.correctAnswer"
+            placeholder="Correct Answer (must match option exactly)"
+          />
+
+          <!-- DELETE QUESTION -->
+          <div class="text-end mt-2">
+            <button class="btn btn-sm btn-danger" (click)="removeQuestion(i)">
+              🗑 Remove Question
+            </button>
+          </div>
+        </div>
+
+        <!-- ADD QUESTION -->
+        <button class="btn btn-primary w-100 mt-3" (click)="addQuestion()">
+          ➕ Add Question
+        </button>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-primary" (click)="updateQuiz()">
+          Update Quiz
         </button>
       </div>
     </div>

@@ -12,27 +12,28 @@ import { jwtDecode } from 'jwt-decode'; // ✅ Import jwt-decode
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './quiz-builder.component.html',
-  styleUrls: ['./quiz-builder.component.css']
+  styleUrls: ['./quiz-builder.component.css'],
 })
 export class QuizBuilderComponent implements OnInit {
-    // ✅ ADD THIS LINE
+  // ✅ ADD THIS LINE
   activeTab: 'QUESTIONS' | 'SETTINGS' = 'QUESTIONS';
   quizId!: number;
   questions: Question[] = [];
 
+  totalTimeMinutes: number | null = null;
+  perQuestionTimeSeconds: number | null = null;
 
-quiz: any = {
-  title: '',
-  description: '',
-  totalTimeMinutes: 30,
-  perQuestionTimeSeconds: null,
-  autoSubmit: true,
-  shuffleQuestions: true,
-  proctoringEnabled: true,
-  quizMode: 'GRADED'
-};
+  quiz: any = {
+    title: '',
+    description: '',
+    totalTimeMinutes: 30,
+    perQuestionTimeSeconds: null,
+    autoSubmit: true,
+    shuffleQuestions: true,
+    proctoringEnabled: true,
+    quizMode: 'GRADED',
+  };
 
-  
   // Current Question Form Data
   newQuestion: Question = {
     content: '',
@@ -41,7 +42,7 @@ quiz: any = {
     correctAnswer: '',
     allowedLanguage: 'JAVA',
     sampleInput: '',
-    sampleOutput: ''
+    sampleOutput: '',
   };
 
   isSaving = false;
@@ -50,24 +51,23 @@ quiz: any = {
     private route: ActivatedRoute,
     private builderService: QuizBuilderService,
     private router: Router,
-    private authService: AuthService // ✅ Inject AuthService
+    private authService: AuthService, // ✅ Inject AuthService
   ) {}
 
-ngOnInit(): void {
-  this.quizId = Number(this.route.snapshot.paramMap.get('id'));
+  ngOnInit(): void {
+    this.quizId = Number(this.route.snapshot.paramMap.get('id'));
 
-  // 🔁 Delay to ensure imported questions are committed before fetch
-  setTimeout(() => {
-    this.loadQuestions();
-    this.loadSettings();
-  }, 300);
-}
-
+    // 🔁 Delay to ensure imported questions are committed before fetch
+    setTimeout(() => {
+      this.loadQuestions();
+      this.loadSettings();
+    }, 300);
+  }
 
   loadQuestions() {
     this.builderService.getQuestions(this.quizId).subscribe({
-      next: (data) => this.questions = data,
-      error: (err) => console.error(err)
+      next: (data) => (this.questions = data),
+      error: (err) => console.error(err),
     });
   }
 
@@ -83,13 +83,15 @@ ngOnInit(): void {
   //   }
   // }
 
-    setType(type: 'MCQ' | 'CODING') {
+  setType(type: 'MCQ' | 'CODING') {
     this.newQuestion.type = type;
   }
 
   // Manage MCQ Options
-  trackByFn(index: number, item: any) { return index; }
-  
+  trackByFn(index: number, item: any) {
+    return index;
+  }
+
   addOption() {
     this.newQuestion.options?.push('');
   }
@@ -114,7 +116,9 @@ ngOnInit(): void {
         return;
       }
       // Filter out empty options
-      this.newQuestion.options = this.newQuestion.options?.filter(opt => opt.trim() !== '');
+      this.newQuestion.options = this.newQuestion.options?.filter(
+        (opt) => opt.trim() !== '',
+      );
     }
 
     this.isSaving = true;
@@ -128,26 +132,37 @@ ngOnInit(): void {
       error: (err) => {
         console.error(err);
         this.isSaving = false;
-      }
+      },
     });
   }
 
   deleteQuestion(id: number | undefined) {
     if (!id) return;
     if (confirm('Delete this question?')) {
-      this.builderService.deleteQuestion(id).subscribe(() => this.loadQuestions());
+      this.builderService
+        .deleteQuestion(id)
+        .subscribe(() => this.loadQuestions());
     }
   }
 
-saveSettings() {
-  this.builderService
-    .updateQuizSettings(this.quizId, this.quiz)
-    .subscribe({
-      next: () => alert('Settings saved successfully'),
-      error: err => console.error('Failed to save settings', err)
-    });
-}
+  saveSettings() {
+    const settings = {
+      title: this.quiz.title, // ✅ ADD THIS
+      description: this.quiz.description, // ✅ ADD THIS
 
+      totalTimeMinutes: this.quiz.totalTimeMinutes,
+      perQuestionTimeSeconds: this.quiz.perQuestionTimeSeconds,
+      autoSubmit: this.quiz.autoSubmit,
+      shuffleQuestions: this.quiz.shuffleQuestions,
+      proctoringEnabled: this.quiz.proctoringEnabled,
+      quizMode: this.quiz.quizMode,
+    };
+
+    this.builderService.updateQuizSettings(this.quizId, settings).subscribe({
+      next: () => alert('Settings saved successfully'),
+      error: (err) => console.error('Failed to save settings', err),
+    });
+  }
 
   resetForm() {
     this.newQuestion = {
@@ -157,105 +172,99 @@ saveSettings() {
       correctAnswer: '',
       allowedLanguage: 'JAVA',
       sampleInput: '',
-      sampleOutput: ''
+      sampleOutput: '',
     };
   }
-  
 
   // ✅ FIX: Dynamic Redirect based on Role
-// goBack() {
-//   const token = this.authService.getToken();
+  // goBack() {
+  //   const token = this.authService.getToken();
 
-//   if (!token) {
-//     this.router.navigate(['/home']);
-//     return;
-//   }
+  //   if (!token) {
+  //     this.router.navigate(['/home']);
+  //     return;
+  //   }
 
-//   try {
-//     const decodedToken: any = jwtDecode(token);
-//     const roles: string[] = decodedToken.roles || [];
+  //   try {
+  //     const decodedToken: any = jwtDecode(token);
+  //     const roles: string[] = decodedToken.roles || [];
 
-//     // 🔴 ADMIN
-//     if (roles.includes('ADMIN')) {
-//       this.router.navigate(['/dashboard/admin']);
-//       return;
-//     }
+  //     // 🔴 ADMIN
+  //     if (roles.includes('ADMIN')) {
+  //       this.router.navigate(['/dashboard/admin']);
+  //       return;
+  //     }
 
-//     // 🟣 POOL
-//     if (roles.includes('POOL_USER')) {
-//       this.router.navigate(['/pool/dashboard']);
-//       return;
-//     }
+  //     // 🟣 POOL
+  //     if (roles.includes('POOL_USER')) {
+  //       this.router.navigate(['/pool/dashboard']);
+  //       return;
+  //     }
 
-//     // 🟡 TEACHER (Faculty)
-//     if (roles.includes('TEACHER')) {
-//       this.router.navigate(['/dashboard/teacher']);
-//       return;
-//     }
+  //     // 🟡 TEACHER (Faculty)
+  //     if (roles.includes('TEACHER')) {
+  //       this.router.navigate(['/dashboard/teacher']);
+  //       return;
+  //     }
 
-//     // 🔵 STUDENT
-//     if (roles.includes('STUDENT')) {
-//       this.router.navigate(['/dashboard/student']);
-//       return;
-//     }
+  //     // 🔵 STUDENT
+  //     if (roles.includes('STUDENT')) {
+  //       this.router.navigate(['/dashboard/student']);
+  //       return;
+  //     }
 
-//     // 🟢 GENERAL
-//     if (roles.includes('GENERAL_USER')) {
-//       this.router.navigate(['/dashboard/general']);
-//       return;
-//     }
+  //     // 🟢 GENERAL
+  //     if (roles.includes('GENERAL_USER')) {
+  //       this.router.navigate(['/dashboard/general']);
+  //       return;
+  //     }
 
-//     // fallback
-//     this.router.navigate(['/home']);
+  //     // fallback
+  //     this.router.navigate(['/home']);
 
-//   } catch (e) {
-//     console.error("Failed to decode token for redirect:", e);
-//     this.router.navigate(['/home']);
-//   }
-// }
+  //   } catch (e) {
+  //     console.error("Failed to decode token for redirect:", e);
+  //     this.router.navigate(['/home']);
+  //   }
+  // }
 
+  goBack() {
+    const user = this.authService.getCurrentUser();
 
-goBack() {
-  const user = this.authService.getCurrentUser();
-
-  if (!user) {
-    this.router.navigate(['/home']);
-    return;
-  }
-
-  if (user.roles?.includes('POOL_USER')) {
-    this.router.navigate(['/pool/dashboard']);
-    return;
-  }
-
-  if (user.roles?.includes('ADMIN')) {
-    this.router.navigate(['/dashboard/admin']);
-    return;
-  }
-
-  if (user.roles?.includes('TEACHER')) {
-    this.router.navigate(['/dashboard/teacher']);
-    return;
-  }
-
-  if (user.roles?.includes('STUDENT')) {
-    this.router.navigate(['/dashboard/student']);
-    return;
-  }
-
-  this.router.navigate(['/dashboard/general']);
-}
-
-
-
-loadSettings() {
-  this.builderService.getQuizSettings(this.quizId).subscribe({
-    next: data => this.quiz = data,
-    error: () => {
-      console.warn('Settings unavailable, continuing without them');
+    if (!user) {
+      this.router.navigate(['/home']);
+      return;
     }
-  });
-}
 
+    if (user.roles?.includes('POOL_USER')) {
+      this.router.navigate(['/pool/dashboard']);
+      return;
+    }
 
+    if (user.roles?.includes('ADMIN')) {
+      this.router.navigate(['/dashboard/admin']);
+      return;
+    }
+
+    if (user.roles?.includes('TEACHER')) {
+      this.router.navigate(['/dashboard/teacher']);
+      return;
+    }
+
+    if (user.roles?.includes('STUDENT')) {
+      this.router.navigate(['/dashboard/student']);
+      return;
+    }
+
+    this.router.navigate(['/dashboard/general']);
+  }
+
+  loadSettings() {
+    this.builderService.getQuizSettings(this.quizId).subscribe({
+      next: (data) => (this.quiz = data),
+      error: () => {
+        console.warn('Settings unavailable, continuing without them');
+      },
+    });
+  }
 }

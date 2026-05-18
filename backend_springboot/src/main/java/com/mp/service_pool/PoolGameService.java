@@ -77,6 +77,14 @@ public class PoolGameService {
         return sessionRepository.save(session);
     }
 
+    
+    
+    
+    public PoolLiveQuizSession getSession(String gamePin) {
+        return sessionRepository.findByGamePin(gamePin)
+                .orElseThrow(() -> new RuntimeException("Invalid Game PIN"));
+    }
+    
 
     // =====================================================
     // 2️⃣ JOIN GAME (PLAYER)
@@ -475,6 +483,7 @@ public void destroySession(String gamePin) {
  // 3️⃣ Delete session itself
  sessionRepository.delete(session);
 }
+
 
 
 
